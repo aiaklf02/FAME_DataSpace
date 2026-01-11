@@ -349,7 +349,6 @@ datasources:
 
 | Tool | Purpose | File |
 |------|---------|------|
-| **Protégé** | OWL Ontology Editor (Stanford) | `semantic/fame_ontology.owl` |
 | **Apache Jena Fuseki** | RDF Triple Store + SPARQL Server | Docker :3030 |
 | **RDFLib** | Python RDF manipulation | `semantic/rdf_generator.py` |
 
