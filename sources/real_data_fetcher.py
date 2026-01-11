@@ -43,12 +43,52 @@ class RealDataFetcher:
         """Fetch REAL stock data from Yahoo Finance API."""
         if symbols is None:
             symbols = [
-                # US Tech Giants
-                "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA",
-                # European Banks
-                "BNP.PA", "SAN.MC", "DBK.DE", "HSBA.L", "INGA.AS",
-                # European Fintech/Payments
-                "ADYEN.AS", "WLN.PA"
+                # ═══════════════════════════════════════════════════════════════
+                # US TECH GIANTS (FAANG+)
+                # ═══════════════════════════════════════════════════════════════
+                "AAPL", "MSFT", "GOOGL", "GOOG", "AMZN", "META", "NVDA", "TSLA",
+                "NFLX", "AMD", "INTC", "ORCL", "CRM", "ADBE", "CSCO", "IBM",
+                "PYPL", "SQ", "SHOP", "UBER", "LYFT", "ABNB", "SNAP", "PINS",
+                "TWLO", "ZM", "DOCU", "OKTA", "CRWD", "NET", "DDOG", "SNOW",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # US FINANCE & BANKS
+                # ═══════════════════════════════════════════════════════════════
+                "JPM", "BAC", "WFC", "GS", "MS", "C", "USB", "PNC", "TFC", "COF",
+                "AXP", "V", "MA", "DFS", "SYF", "BLK", "SCHW", "SPGI", "ICE",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # S&P 500 MAJOR COMPANIES
+                # ═══════════════════════════════════════════════════════════════
+                "JNJ", "PG", "UNH", "HD", "DIS", "VZ", "KO", "PEP", "MRK", "PFE",
+                "ABBV", "TMO", "COST", "WMT", "CVX", "XOM", "LLY", "MCD", "NKE",
+                "QCOM", "TXN", "HON", "UPS", "CAT", "BA", "MMM", "GE", "LMT",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # EUROPEAN BANKS & FINANCE
+                # ═══════════════════════════════════════════════════════════════
+                "BNP.PA", "SAN.MC", "DBK.DE", "HSBA.L", "INGA.AS", "BBVA.MC",
+                "UCG.MI", "ISP.MI", "BARC.L", "LLOY.L", "NWG.L", "ABN.AS",
+                "DANSKE.CO", "SEB-A.ST", "SWED-A.ST", "DNB.OL", "NORDEA.HE",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # EUROPEAN TECH & FINTECH
+                # ═══════════════════════════════════════════════════════════════
+                "ADYEN.AS", "WLN.PA", "SAP.DE", "ASML.AS", "NXPI.AS", "STM.PA",
+                "CAP.PA", "ATO.PA", "DTE.DE", "VOW3.DE", "BMW.DE", "DAI.DE",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # ASIAN MARKETS
+                # ═══════════════════════════════════════════════════════════════
+                "9984.T", "7203.T", "6758.T", "9432.T", "8306.T",  # Japan
+                "005930.KS", "000660.KS",  # Korea (Samsung, SK Hynix)
+                "0700.HK", "9988.HK", "3690.HK", "9618.HK",  # Hong Kong/China
+                
+                # ═══════════════════════════════════════════════════════════════
+                # CRYPTO-RELATED & ETFs
+                # ═══════════════════════════════════════════════════════════════
+                "COIN", "MSTR", "RIOT", "MARA", "HUT",
+                "SPY", "QQQ", "IWM", "DIA", "VTI", "VOO", "ARKK"
             ]
         
         logger.info(f"📈 Fetching REAL stock data for {len(symbols)} symbols...")

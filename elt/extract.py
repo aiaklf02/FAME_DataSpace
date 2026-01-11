@@ -72,10 +72,41 @@ class FAMEExtractor:
         
         if symbols is None:
             symbols = [
-                "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META",  # US Tech
-                "JPM", "BAC", "GS",                                # US Banks  
-                "BNP.PA", "DBK.DE", "INGA.AS",                     # EU Banks
-                "ADYEN.AS"                                         # EU Fintech
+                # ═══════════════════════════════════════════════════════════════
+                # US TECH GIANTS (FAANG+)
+                # ═══════════════════════════════════════════════════════════════
+                "AAPL", "MSFT", "GOOGL", "GOOG", "AMZN", "META", "NVDA", "TSLA",
+                "NFLX", "AMD", "INTC", "ORCL", "CRM", "ADBE", "CSCO", "IBM",
+                "PYPL", "SQ", "UBER", "ABNB", "SNAP", "ZM", "CRWD", "NET",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # US FINANCE & BANKS
+                # ═══════════════════════════════════════════════════════════════
+                "JPM", "BAC", "WFC", "GS", "MS", "C", "USB", "PNC", "COF",
+                "AXP", "V", "MA", "BLK", "SCHW", "SPGI",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # S&P 500 MAJOR COMPANIES
+                # ═══════════════════════════════════════════════════════════════
+                "JNJ", "PG", "UNH", "HD", "DIS", "VZ", "KO", "PEP", "MRK", "PFE",
+                "ABBV", "TMO", "COST", "WMT", "CVX", "XOM", "LLY", "MCD", "NKE",
+                "QCOM", "TXN", "HON", "UPS", "CAT", "BA", "GE", "LMT",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # EUROPEAN BANKS & FINANCE
+                # ═══════════════════════════════════════════════════════════════
+                "BNP.PA", "SAN.MC", "DBK.DE", "HSBA.L", "INGA.AS", "BBVA.MC",
+                "UCG.MI", "ISP.MI", "BARC.L", "LLOY.L",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # EUROPEAN TECH & FINTECH
+                # ═══════════════════════════════════════════════════════════════
+                "ADYEN.AS", "SAP.DE", "ASML.AS",
+                
+                # ═══════════════════════════════════════════════════════════════
+                # ETFs
+                # ═══════════════════════════════════════════════════════════════
+                "SPY", "QQQ", "IWM", "VOO"
             ]
         
         raw_data = []

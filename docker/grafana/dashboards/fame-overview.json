@@ -1,12 +1,12 @@
 {
   "annotations": { "list": [] },
-  "description": "FAME Financial Data Space - All Data Sources",
+  "description": "FAME Financial Data Space - Real-Time Dashboard",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
   "links": [],
-  "liveNow": false,
+  "liveNow": true,
   "panels": [
     {
       "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
@@ -130,7 +130,7 @@
           { "matcher": { "id": "byName", "options": "change_pct" }, "properties": [{ "id": "unit", "value": "percent" }] }
         ]
       },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 7 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 7 },
       "id": 5,
       "options": { "cellHeight": "md", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
       "targets": [{
@@ -145,9 +145,9 @@
       "type": "table"
     },
     {
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 17},
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 15},
       "id": 102,
-      "title": "🔄 Kafka Streaming Data",
+      "title": "🔄 Kafka Streaming Data (Real-Time)",
       "type": "row"
     },
     {
@@ -163,7 +163,7 @@
           { "matcher": { "id": "byName", "options": "price" }, "properties": [{ "id": "unit", "value": "currencyUSD" }] }
         ]
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
       "id": 6,
       "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
       "targets": [{
@@ -174,7 +174,7 @@
         "rawSql": "SELECT symbol, price, volume, change_percent, timestamp FROM fame_streaming.stock_quotes ORDER BY timestamp DESC LIMIT 20",
         "refId": "A"
       }],
-      "title": "🔄 Kafka - Live Stock Quotes",
+      "title": "🔄 Kafka - Live Stock Quotes (Auto-Refresh)",
       "type": "table"
     },
     {
@@ -187,7 +187,7 @@
           "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }] }
         }
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
       "id": 7,
       "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
       "targets": [{
@@ -202,9 +202,39 @@
       "type": "table"
     },
     {
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 26},
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 24},
       "id": 103,
-      "title": "📊 CSV Data - SP500/NYSE/NASDAQ",
+      "title": "💱 ECB XML - Forex Exchange Rates (215K+ records)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        }
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 25 },
+      "id": 9,
+      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT target_currency as currency, rate, reference_date as date FROM fame_analytics.silver_silver_forex WHERE target_currency IN ('USD', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY') ORDER BY reference_date DESC, target_currency LIMIT 100",
+        "refId": "A"
+      }],
+      "title": "💱 Forex Exchange Rates (ECB XML - 20 Years History)",
+      "type": "table"
+    },
+    {
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 33},
+      "id": 104,
+      "title": "📊 CSV Data - SP500/NYSE/NASDAQ Companies",
       "type": "row"
     },
     {
@@ -220,7 +250,7 @@
           { "matcher": { "id": "byName", "options": "market_cap" }, "properties": [{ "id": "unit", "value": "currencyUSD" }] }
         ]
       },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 27 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 34 },
       "id": 8,
       "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
       "targets": [{
@@ -235,39 +265,9 @@
       "type": "table"
     },
     {
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 37},
-      "id": 104,
-      "title": "💱 ECB XML - Forex Rates",
-      "type": "row"
-    },
-    {
-      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
-          "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
-        }
-      },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 38 },
-      "id": 9,
-      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
-      "targets": [{
-        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
-        "editorMode": "code",
-        "format": "table",
-        "rawQuery": true,
-        "rawSql": "SELECT currency, rate, date FROM fame_analytics.silver_silver_forex WHERE currency IN ('USD', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'INR', 'BRL') ORDER BY date DESC, currency LIMIT 100",
-        "refId": "A"
-      }],
-      "title": "💱 Forex Exchange Rates (ECB XML Data)",
-      "type": "table"
-    },
-    {
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 48},
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 42},
       "id": 105,
-      "title": "💳 PostgreSQL - Transactions",
+      "title": "💳 PostgreSQL - Financial Transactions",
       "type": "row"
     },
     {
@@ -280,10 +280,11 @@
           "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
         },
         "overrides": [
-          { "matcher": { "id": "byName", "options": "amount" }, "properties": [{ "id": "unit", "value": "currencyUSD" }] }
+          { "matcher": { "id": "byName", "options": "amount" }, "properties": [{ "id": "unit", "value": "currencyUSD" }] },
+          { "matcher": { "id": "byName", "options": "amount_eur" }, "properties": [{ "id": "unit", "value": "currencyEUR" }] }
         ]
       },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 49 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 43 },
       "id": 10,
       "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
       "targets": [{
@@ -291,16 +292,16 @@
         "editorMode": "code",
         "format": "table",
         "rawQuery": true,
-        "rawSql": "SELECT transaction_id, sender_id, receiver_id, amount, currency, status, created_at FROM fame_analytics.silver_silver_transactions ORDER BY created_at DESC LIMIT 30",
+        "rawSql": "SELECT transaction_id, sender_name, receiver_name, amount, currency, amount_eur, status, transaction_type, timestamp FROM fame_analytics.silver_silver_transactions ORDER BY timestamp DESC LIMIT 30",
         "refId": "A"
       }],
-      "title": "💳 Financial Transactions (PostgreSQL Data)",
+      "title": "💳 Financial Transactions (PostgreSQL Source)",
       "type": "table"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "schemaVersion": 39,
-  "tags": ["fame", "financial", "kafka", "spark", "streaming"],
+  "tags": ["fame", "financial", "kafka", "spark", "streaming", "real-time"],
   "templating": { "list": [] },
   "time": { "from": "now-6h", "to": "now" },
   "timepicker": {},
