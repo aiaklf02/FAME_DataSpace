@@ -18,14 +18,63 @@ from typing import List, Dict, Optional
 
 SPARQL_PREFIXES = """
 PREFIX fame: <http://fame.eu/ontology#>
-PREFIX fdata: <http://fame.eu/data/>
+PREFIX fdata: <http://fame.eu/data#>
 PREFIX fvocab: <http://fame.eu/vocabulary#>
+PREFIX fskos: <http://fame.eu/skos#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX schema: <http://schema.org/>
+"""
+
+# ============================================================================
+# PROTÉGÉ ONTOLOGY QUERIES - Named Graph Support
+# ============================================================================
+
+# Query ontology graph for class hierarchy
+QUERY_ONTOLOGY_CLASSES = """
+# QUERY: Get class hierarchy from Protégé ontology
+# Graph: http://fame.eu/graph/ontology
+
+SELECT ?class ?label ?superClass ?comment
+WHERE {
+    GRAPH <http://fame.eu/graph/ontology> {
+        ?class a owl:Class .
+        OPTIONAL { ?class rdfs:label ?label }
+        OPTIONAL { ?class rdfs:subClassOf ?superClass }
+        OPTIONAL { ?class rdfs:comment ?comment }
+        FILTER(STRSTARTS(STR(?class), "http://fame.eu/"))
+    }
+}
+ORDER BY ?class
+"""
+
+# Query for OWL properties
+QUERY_ONTOLOGY_PROPERTIES = """
+# QUERY: Get all properties from Protégé ontology
+
+SELECT ?property ?type ?label ?domain ?range
+WHERE {
+    {
+        ?property a owl:ObjectProperty .
+        BIND("ObjectProperty" AS ?type)
+    }
+    UNION
+    {
+        ?property a owl:DatatypeProperty .
+        BIND("DatatypeProperty" AS ?type)
+    }
+    OPTIONAL { ?property rdfs:label ?label }
+    OPTIONAL { ?property rdfs:domain ?domain }
+    OPTIONAL { ?property rdfs:range ?range }
+    FILTER(STRSTARTS(STR(?property), "http://fame.eu/"))
+}
+ORDER BY ?type ?property
 """
 
 

@@ -1,433 +1,505 @@
 # 🏦 FAME Financial Data Space
 
-## Finance & Embedded Finance - Secure Financial Data Sharing Platform
+> **Finance & Embedded Finance** - Plateforme de Partage de Données Financières Sécurisée
 
-![Architecture](https://img.shields.io/badge/Architecture-Data%20Lake%20+%20Data%20Fabric%20+%20DW-blue)
+![Architecture](https://img.shields.io/badge/Architecture-Data%20Lake%20+%20Fabric%20+%20Warehouse-blue)
 ![Streaming](https://img.shields.io/badge/Streaming-Apache%20Kafka-orange)
-![Semantic](https://img.shields.io/badge/Semantic-RDF%20/%20OWL%20/%20SPARQL-green)
-![Warehouse](https://img.shields.io/badge/Warehouse-DuckDB-yellow)
-![Docker](https://img.shields.io/badge/Container-Docker-2496ED)
-![Grafana](https://img.shields.io/badge/Dashboards-Grafana-F46800)
-![Redis](https://img.shields.io/badge/Cache-Redis-DC382D)
-![Prometheus](https://img.shields.io/badge/Metrics-Prometheus-E6522C)
+![Semantic](https://img.shields.io/badge/Semantic-Protégé%20+%20Fuseki-green)
+![Docker](https://img.shields.io/badge/Container-Docker%20Compose-2496ED)
 
 ---
 
-## 🌟 INNOVATION FEATURES
+## 📋 Table des Matières
 
-> **Ce projet va au-delà du cahier des charges avec des fonctionnalités innovantes**
-
-| Innovation | Technology | Description |
-|------------|------------|-------------|
-| 🔴 **Real-time Dashboards** | Grafana | Monitoring temps réel avec auto-provisioning YAML |
-| ⚡ **Caching Layer** | Redis | Cache intelligent pour performances optimales |
-| 📈 **Metrics Collection** | Prometheus | Collecte métriques pipeline, qualité, KPIs financiers |
-| 🚨 **Alerting System** | Custom Python | Détection d'anomalies + alertes multi-canal |
-| 🔄 **EtLT Pattern** | DuckDB | Transformation IN-warehouse (plus moderne que ETL) |
-| 🌐 **Real Data** | Yahoo Finance, ECB | Données réelles Internet (pas de mock data) |
+1. [Vue d'ensemble](#-vue-densemble)
+2. [Architecture](#-architecture)
+3. [Technologies](#-technologies)
+4. [Sources de Données](#-sources-de-données)
+5. [Couche Sémantique](#-couche-sémantique-protégé--fuseki)
+6. [Services Docker](#-services-docker)
+7. [Installation & Commandes](#-installation--commandes)
+8. [Structure du Projet](#-structure-du-projet)
 
 ---
 
-## 📋 Project Overview
+## 🎯 Vue d'ensemble
 
-This project implements a **sectoral Data Space** for financial services (FAME - Finance & Embedded Finance), enabling:
+Ce projet implémente un **Data Space sectoriel** pour les services financiers (FAME), intégrant :
 
-- ✅ **Integration of 4 heterogeneous data sources** (API, XML, CSV, SQL)
-- ✅ **Real-time streaming** with Apache Kafka + Spark
-- ✅ **Data Lake (Bronze/Silver/Gold)** for raw data storage & processing
-- ✅ **Data Fabric** for unified governance, metadata & data catalog
-- ✅ **Data Warehouse (DuckDB + PostgreSQL)** for fast analytical queries & BI
-- ✅ **Semantic interoperability** using RDF, SKOS, OWL, and SPARQL
-- ✅ **Containerized deployment** with Docker Compose
-- ✅ **Grafana Dashboards** with YAML auto-provisioning
-
----
-
-## 📊 Data Sources (4 Heterogeneous Sources) - REAL DATA
-
-| # | Source | Type | Format | Data | Volume |
-|---|--------|------|--------|------|--------|
-| 1 | **Yahoo Finance API** | REST API | JSON | 13 stocks temps réel | AAPL, MSFT, GOOGL, AMZN, NVDA... |
-| 2 | **ECB Exchange Rates** | XML Feed | XML | 215,699 forex rates | 20 ans d'historique EUR |
-| 3 | **Company Financials** | File System | CSV | 22,614 companies | SP500, NYSE, NASDAQ |
-| 4 | **Transactions DB** | PostgreSQL | SQL | 759 transactions | Banking transactions |
-
-### Source Details
-
-#### Source 1: Yahoo Finance API (Real-time JSON)
-- **Provider**: Yahoo Finance (yfinance)
-- **Data**: Stock quotes, prices, volumes, market cap
-- **Symbols**: AAPL, MSFT, GOOGL, AMZN, NVDA, META, TSLA, JPM, V, JNJ, WMT, PG, MA
-- **Kafka Topic**: `fame-stocks`
-
-#### Source 2: ECB Exchange Rates (XML Feed)
-- **Provider**: European Central Bank
-- **Data**: Official EUR exchange rates for 30+ currencies
-- **History**: 20 years of daily rates (2004-2024)
-- **File**: `data/bronze/xml/ecb_historical_20years.xml`
-
-#### Source 3: Company Financials (CSV Batch)
-- **Sources**: SP500, NYSE, NASDAQ listings + World GDP
-- **Data**: Company info, sectors, market cap, PE ratios
-- **Files**: `sp500_companies.csv`, `nyse_listings.csv`, `nasdaq_listings.csv`, `world_gdp.csv`
-
-#### Source 4: Financial Transactions (PostgreSQL)
-- **Type**: Transactional database
-- **Data**: SEPA transfers, payments, card transactions
-- **Features**: Multi-currency, cross-border flagging
+| Fonctionnalité | Description |
+|----------------|-------------|
+| **4 Sources Hétérogènes** | API REST, XML, CSV, SQL |
+| **Streaming Temps Réel** | Apache Kafka + Spark |
+| **Data Lake Medallion** | Bronze → Silver → Gold |
+| **Data Warehouse** | DuckDB + PostgreSQL |
+| **Couche Sémantique** | Protégé (OWL) + Fuseki (SPARQL) |
+| **Dashboards** | Grafana avec auto-provisioning |
+| **12 Services Docker** | Infrastructure complète conteneurisée |
 
 ---
 
-## 🏗️ Architecture: Data Lake + Data Fabric + Data Warehouse
+## 🏗️ Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                      FAME DATA SPACE ARCHITECTURE v3.0                            │
-│                   Data Lake + Data Fabric + Data Warehouse + Grafana              │
-├──────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                   │
-│  ┌─────────────────────────── DATA SOURCES (REAL DATA) ─────────────────────────┐│
-│  │  ┌───────────┐   ┌───────────┐   ┌───────────┐   ┌───────────┐              ││
-│  │  │ SOURCE 1  │   │ SOURCE 2  │   │ SOURCE 3  │   │ SOURCE 4  │              ││
-│  │  │Yahoo API  │   │ ECB XML   │   │ CSV Files │   │ PostgreSQL│              ││
-│  │  │  (JSON)   │   │  (XML)    │   │   (CSV)   │   │   (SQL)   │              ││
-│  │  │ 13 stocks │   │ 215K forex│   │ 22K co.   │   │ 759 tx    │              ││
-│  │  └─────┬─────┘   └─────┬─────┘   └─────┬─────┘   └─────┬─────┘              ││
-│  └────────┼───────────────┼───────────────┼───────────────┼─────────────────────┘│
-│           │               │               │               │                      │
-│           ▼               ▼               ▼               ▼                      │
-│  ┌──────────────────────────────────────────────────────────────────────────────┐│
-│  │                         APACHE KAFKA (Streaming)                             ││
-│  │            fame-stocks              fame-alerts              fame-forex      ││
-│  │                                                                              ││
-│  │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐                   ││
-│  │  │   Kafka UI   │    │   Zookeeper  │    │    Spark     │                   ││
-│  │  │   :8080      │    │    :2181     │    │    :8081     │                   ││
-│  │  └──────────────┘    └──────────────┘    └──────────────┘                   ││
-│  └────────────────────────────────┬─────────────────────────────────────────────┘│
-│                                   │                                              │
-│  ┌────────────────────────────────┼─────────────────────────────────────────────┐│
-│  │                    DATA FABRIC LAYER (Governance)                            ││
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     ││
-│  │  │   Metadata   │  │ Data Catalog │  │   Lineage    │  │  Data Quality│     ││
-│  │  │  Management  │  │   (Search)   │  │   Tracking   │  │    Rules     │     ││
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘     ││
-│  └────────────────────────────────┬─────────────────────────────────────────────┘│
-│                                   │                                              │
-│                                   ▼                                              │
-│  ┌──────────────────────────────────────────────────────────────────────────────┐│
-│  │                        DATA LAKE (Local Storage)                             ││
-│  │   ┌────────────┐     ┌────────────┐     ┌────────────┐                       ││
-│  │   │   BRONZE   │ ──► │   SILVER   │ ──► │    GOLD    │                       ││
-│  │   │  (Raw/JSON │     │ (Cleansed/ │     │  (Curated/ │                       ││
-│  │   │  XML/CSV)  │     │   Clean)   │     │  Aggregated)│                      ││
-│  │   └────────────┘     └────────────┘     └──────┬─────┘                       ││
-│  └───────────────────────────────────────────────┼──────────────────────────────┘│
-│                                                  │                               │
-│           ┌──────────────────────────────────────┼───────────────────┐          │
-│           │                                      │                   │          │
-│           ▼                                      ▼                   ▼          │
-│  ┌─────────────────┐              ┌─────────────────────┐   ┌────────────────┐  │
-│  │  DATA WAREHOUSE │              │   SEMANTIC LAYER    │   │   POSTGRESQL   │  │
-│  │    (DuckDB)     │              │                     │   │   (Analytics)  │  │
-│  │                 │              │  ┌───────────────┐  │   │                │  │
-│  │ ┌─────────────┐ │              │  │ OWL Ontology  │  │   │ fame_analytics │  │
-│  │ │ DIM_COMPANY │ │              │  └───────────────┘  │   │ fame_streaming │  │
-│  │ │ DIM_CURRENCY│ │              │  ┌───────────────┐  │   │                │  │
-│  │ │ DIM_DATE    │ │              │  │SKOS Vocabulary│  │   └───────┬────────┘  │
-│  │ └─────────────┘ │              │  └───────────────┘  │           │          │
-│  │ ┌─────────────┐ │              │  ┌───────────────┐  │           │          │
-│  │ │ FACT_TRADES │ │              │  │  RDF Store    │  │           │          │
-│  │ │ FACT_FX     │ │              │  │  (Fuseki)     │  │           │          │
-│  │ │FACT_PAYMENTS│ │              │  │   :3030       │  │           │          │
-│  │ └─────────────┘ │              │  └───────────────┘  │           │          │
-│  └────────┬────────┘              └──────────┬──────────┘           │          │
-│           │                                  │                      │          │
-│           └──────────────────────────────────┼──────────────────────┘          │
-│                                              │                                  │
-│                                              ▼                                  │
-│  ┌──────────────────────────────────────────────────────────────────────────────┐│
-│  │                    📊 GRAFANA DASHBOARDS (Auto-provisioned)                  ││
-│  │  ┌──────────────────────────────────────────────────────────────────────┐   ││
-│  │  │  📈 Stocks (13)  │  💱 Forex (215K)  │  📊 CSV (22K)  │  🔄 Kafka    │   ││
-│  │  │  Yahoo Finance   │   ECB XML Data    │  SP500/NYSE    │  Streaming   │   ││
-│  │  └──────────────────────────────────────────────────────────────────────┘   ││
-│  │                        http://localhost:3000                                 ││
-│  └──────────────────────────────────────────────────────────────────────────────┘│
-│                                                                                   │
-└──────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         FAME DATA SPACE ARCHITECTURE                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            4 DATA SOURCES                                    │
+├─────────────────┬─────────────────┬─────────────────┬───────────────────────┤
+│  Yahoo Finance  │    ECB XML      │   CSV Files     │     PostgreSQL        │
+│  (REST/JSON)    │  (Exchange Rates)│  (Financials)   │   (Transactions)      │
+│   82 stocks     │   215K rates    │   22K records   │     759 tx            │
+└────────┬────────┴────────┬────────┴────────┬────────┴──────────┬────────────┘
+         │                 │                 │                   │
+         ▼                 ▼                 ▼                   ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           APACHE KAFKA                                       │
+│        fame-stocks │ fame-forex │ fame-financials │ fame-transactions       │
+└─────────────────────────────────────┬───────────────────────────────────────┘
+                                      │
+         ┌────────────────────────────┼────────────────────────────┐
+         ▼                            ▼                            ▼
+┌─────────────────┐      ┌─────────────────────┐      ┌─────────────────────┐
+│   DATA LAKE     │      │   SPARK STREAMING   │      │  SEMANTIC LAYER     │
+│   (Medallion)   │      │                     │      │  Protégé + Fuseki   │
+├─────────────────┤      │  • Parse JSON/XML   │      ├─────────────────────┤
+│ 🥉 Bronze (Raw) │      │  • Anomaly Detect   │      │ • OWL Ontology      │
+│ 🥈 Silver (Clean)│      │  • Enrichment       │      │ • RDF Instances     │
+│ 🥇 Gold (Agg)   │      │                     │      │ • SKOS Vocabulary   │
+└────────┬────────┘      └──────────┬──────────┘      └──────────┬──────────┘
+         │                          │                            │
+         ▼                          ▼                            ▼
+┌─────────────────┐      ┌─────────────────────┐      ┌─────────────────────┐
+│     DuckDB      │      │     PostgreSQL      │      │   Apache Fuseki     │
+│   (Warehouse)   │      │   (Hot Storage)     │      │  (SPARQL Endpoint)  │
+└────────┬────────┘      └──────────┬──────────┘      └──────────┬──────────┘
+         │                          │                            │
+         └──────────────────────────┼────────────────────────────┘
+                                    ▼
+                         ┌─────────────────────┐
+                         │      GRAFANA        │
+                         │    Dashboards       │
+                         │  localhost:3000     │
+                         └─────────────────────┘
 ```
 
 ---
 
-## 🐳 Docker Infrastructure
+## 🛠️ Technologies
 
-### Services (12 Containers)
+### Stack Technique
 
-| Service | Image | Port | Description |
-|---------|-------|------|-------------|
-| **fame-kafka** | confluentinc/cp-kafka:7.5 | 29092 | Message streaming |
-| **fame-zookeeper** | confluentinc/cp-zookeeper:7.5 | 2181 | Kafka coordination |
-| **fame-kafka-ui** | provectuslabs/kafka-ui | 8080 | Kafka monitoring UI |
-| **fame-postgres** | postgres:15-alpine | 5432 | Transaction database + Analytics |
-| **fame-fuseki** | stain/jena-fuseki | 3030 | RDF Triple Store / SPARQL |
-| **fame-spark-master** | bitnami/spark:3.5 | 8081 | Spark master node |
-| **fame-spark-worker** | bitnami/spark:3.5 | - | Spark worker node |
-| **fame-grafana** | grafana/grafana:latest | 3000 | 📊 Dashboards (YAML provisioned) |
-| **fame-prometheus** | prom/prometheus | 9090 | Metrics collection |
-| **fame-redis** | redis:7-alpine | 6379 | Caching layer |
+| Catégorie | Technologie | Version | Port |
+|-----------|-------------|---------|------|
+| **Streaming** | Apache Kafka | 7.5.0 | 9092, 29092 |
+| **Streaming** | Apache Zookeeper | 7.5.0 | 2181 |
+| **Processing** | Apache Spark | 3.5.0 | 8081, 7077 |
+| **Database** | PostgreSQL | 15-alpine | 5432 |
+| **Warehouse** | DuckDB | Latest | - |
+| **Cache** | Redis | 7-alpine | 6379 |
+| **Semantic** | Apache Fuseki | Latest | 3030 |
+| **Ontology** | Protégé | 5.x | - |
+| **Dashboards** | Grafana | Latest | 3000 |
+| **Metrics** | Prometheus | Latest | 9090 |
+| **Kafka UI** | Provectus | Latest | 8080 |
 
-### Quick Start
+### Standards Sémantiques
 
-```powershell
-# 1. Clone and navigate
-git clone https://github.com/YOUR_REPO/FAME-DataSpace.git
-cd FAME-DataSpace
-
-# 2. Start all services
-docker-compose up -d
-
-# 3. Wait for services to be healthy
-docker-compose ps
-
-# 4. Run the complete ETL pipeline (real data from Internet)
-python main.py all
-
-# 5. Access the dashboards
-```
-
-### 🌐 Access Points
-
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **📊 Grafana** | http://localhost:3000 | admin / admin |
-| **📬 Kafka UI** | http://localhost:8080 | - |
-| **🔍 Fuseki SPARQL** | http://localhost:3030 | admin / admin |
-| **🗄️ PostgreSQL** | localhost:5432 | fame_user / fame_password |
+| Standard | Namespace | Usage |
+|----------|-----------|-------|
+| **RDF** | `http://www.w3.org/1999/02/22-rdf-syntax-ns#` | Modèle de données |
+| **RDFS** | `http://www.w3.org/2000/01/rdf-schema#` | Schéma |
+| **OWL** | `http://www.w3.org/2002/07/owl#` | Ontologie |
+| **SKOS** | `http://www.w3.org/2004/02/skos/core#` | Vocabulaire |
+| **FAME** | `http://fame.eu/ontology#` | Domaine métier |
 
 ---
 
-## 📁 Project Structure
+## 📊 Sources de Données
 
+### Résumé des 4 Sources
+
+| # | Source | Format | Records | Kafka Topic |
+|---|--------|--------|---------|-------------|
+| 1 | **Yahoo Finance API** | JSON | 82 stocks | `fame-stocks` |
+| 2 | **ECB Exchange Rates** | XML | 215,699 rates | `fame-forex` |
+| 3 | **Company Financials** | CSV | 22,614 records | `fame-financials` |
+| 4 | **Transactions DB** | SQL | 759 tx | `fame-transactions` |
+
+### Source 1: Yahoo Finance (JSON)
+
+```json
+{
+  "symbol": "AAPL",
+  "price": 259.37,
+  "change_percent": 0.13,
+  "volume": 45123456,
+  "market_cap": 4000000000000,
+  "currency": "USD",
+  "exchange": "NASDAQ",
+  "timestamp": "2026-01-11T10:00:00"
+}
 ```
-FAME-DataSpace/
-│
-├── 📂 docker/
-│   ├── Dockerfile.etl                    # ETL service container
-│   ├── Dockerfile.dashboard              # Dashboard container
-│   ├── 📂 grafana/
-│   │   ├── 📂 provisioning/
-│   │   │   ├── 📂 datasources/
-│   │   │   │   └── datasources.yml       # PostgreSQL auto-config
-│   │   │   └── 📂 dashboards/
-│   │   │       └── dashboards.yml        # Dashboard provider
-│   │   └── 📂 dashboards/
-│   │       └── fame-overview.json        # Main dashboard (10 panels)
-│   ├── 📂 postgres/
-│         └── init.sql                      # DB + schemas initialization
-│
-│
-├── 📂 sources/                           # Data Source Connectors
-│   ├── source1_stock_api.py              # Yahoo Finance API → Kafka
-│   ├── source2_ecb_xml.py                # ECB XML → Kafka
-│   ├── source3_financials_csv.py         # CSV Files → Kafka
-│   ├── source4_transactions_db.py        # PostgreSQL → Kafka
-│   ├── real_data_fetcher.py              # 🌐 Real Internet data fetcher
-│   └── api_connector.py                  # API utilities
-│
-├── 📂 elt/                               # ELT Pipeline
-│   ├── extract.py                        # Data extraction
-│   ├── transform.py                      # Data transformation
-│   ├── load.py                           # Data loading
-│   ├── warehouse.py                      # DuckDB warehouse
-│   ├── main_pipeline.py                  # Pipeline orchestration
-│   └── superset_integration.py           # Export to PostgreSQL for Grafana
-│
-├── 📂 streaming/                         # Kafka Streaming
-│   ├── kafka_producer.py                 # Send to Kafka topics
-│   ├── kafka_consumer.py                 # Read from Kafka
-│   ├── kafka_postgres_bridge.py          # Kafka → PostgreSQL bridge
-│   └── spark_streaming.py                # Spark streaming jobs
-│
-├── 📂 semantic/                          # Semantic Layer
-│   ├── fame_ontology.owl                 # OWL ontology
-│   ├── fame_vocabulary.skos              # SKOS vocabulary
-│   ├── rdf_generator.py                  # RDF triple generation
-│   ├── sparql_queries.py                 # SPARQL query library
-│   └── 📂 prototype/
-│       └── app.py                        # Streamlit semantic UI
-│
-├── 📂 fabric/                            # Data Fabric Layer
-│   ├── data_fabric.py                    # Metadata management
-│   ├── cache_manager.py                  # Redis caching
-│   ├── metrics_service.py                # Prometheus metrics
-│   └── alert_system.py                   # Alerting system
-│
-├── 📂 data/
-│   ├── 📂 bronze/                        # Raw data (landing zone)
-│   │   ├── 📂 api/                       # JSON from Yahoo Finance
-│   │   ├── 📂 xml/                       # XML from ECB (215K+ rates)
-│   │   ├── 📂 csv/                       # CSV files (SP500, NYSE, NASDAQ)
-│   │   └── 📂 sql/                       # SQL exports
-│   ├── 📂 silver/                        # Cleansed data
-│   ├── 📂 gold/                          # Aggregated data
-│   ├── 📂 rdf/                           # RDF serializations
-│   │   └── fame_sample.ttl               # Sample RDF triples
-│   └── 📂 warehouse/
-│       └── fame_warehouse.duckdb         # DuckDB warehouse
-│
-├── docker-compose.yml                    # 🐳 Full infrastructure (12 services)
-├── main.py                               # 🚀 Main entry point
-├── requirements.txt                      # Python dependencies
-└── README.md                             # This file
+
+**Stocks couverts:** AAPL, MSFT, GOOGL, AMZN, META, NVDA, TSLA, JPM, BAC, V, MA, BNP.PA, SAP.DE...
+
+### Source 2: ECB XML (Taux de Change)
+
+```xml
+<Cube time="2026-01-10">
+  <Cube currency="USD" rate="1.0825"/>
+  <Cube currency="GBP" rate="0.83245"/>
+  <Cube currency="JPY" rate="162.45"/>
+</Cube>
+```
+
+**Devises:** USD, GBP, JPY, CHF, AUD, CAD, CNY, HKD + 21 autres
+
+### Source 3: CSV (Financials)
+
+| Fichier | Records | Contenu |
+|---------|---------|---------|
+| `sp500_companies.csv` | 503 | S&P 500 |
+| `nasdaq_listings.csv` | 5,252 | NASDAQ |
+| `nyse_listings.csv` | 2,880 | NYSE |
+| `world_gdp.csv` | 13,979 | PIB mondial |
+
+### Source 4: PostgreSQL (Transactions)
+
+```sql
+CREATE TABLE transactions (
+  transaction_id UUID PRIMARY KEY,
+  amount DECIMAL(15,2),
+  currency VARCHAR(10),
+  sender_id VARCHAR(50),
+  receiver_id VARCHAR(50),
+  status VARCHAR(20),      -- COMPLETED, PENDING, FAILED
+  transaction_type VARCHAR(20), -- TRANSFER, PAYMENT, DEPOSIT
+  timestamp TIMESTAMP
+);
 ```
 
 ---
 
-## 🚀 Pipeline Commands
+## 🔗 Couche Sémantique (Protégé + Fuseki)
 
-```powershell
-# Run complete pipeline (extract + transform + load + warehouse)
-python main.py all
+### Architecture d'Intégration
 
-# Run individual steps
-python main.py extract      # Fetch real data from Internet
-python main.py transform    # Clean and transform data
-python main.py load         # Load to Data Lake layers
-python main.py warehouse    # Build DuckDB warehouse
-
-# Streaming mode
-python main.py streaming --mode produce   # Start Kafka producer
-python main.py streaming --mode consume   # Start Kafka consumer
-
-# Export to PostgreSQL for Grafana
-python -c "from elt.superset_integration import export_all_to_postgres; export_all_to_postgres()"
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                 PROTÉGÉ + FUSEKI INTEGRATION                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────────┐     Export      ┌─────────────────┐        │
+│  │    PROTÉGÉ      │ ──────────────▶ │  APACHE FUSEKI  │        │
+│  │ (Design Tool)   │   OWL/RDF/SKOS  │ (Triple Store)  │        │
+│  │                 │                  │                 │        │
+│  │ • Visual Editor │                  │ • SPARQL API    │        │
+│  │ • Reasoning     │                  │ • TDB2 Storage  │        │
+│  │ • Validation    │                  │ • Inference     │        │
+│  └─────────────────┘                  └────────┬────────┘        │
+│                                                │                 │
+│                                                ▼                 │
+│                              ┌─────────────────────────────┐    │
+│                              │       NAMED GRAPHS          │    │
+│                              ├─────────────────────────────┤    │
+│                              │ ontology  → Classes OWL     │    │
+│                              │ data      → Instances RDF   │    │
+│                              │ vocabulary → Concepts SKOS  │    │
+│                              └─────────────────────────────┘    │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
----
+### Fichiers Ontologie
 
-## 📊 Grafana Dashboard Panels
+| Fichier | Format | Standard | Triples |
+|---------|--------|----------|---------|
+| `fame_data_protege.owl` | RDF/XML | OWL 2.0 | ~500 |
+| `FAME-RDF.rdf` | RDF/XML | RDF 1.1 | ~800 |
+| `FAME-SKOS.ttl` | Turtle | SKOS 1.0 | ~300 |
 
-The FAME Financial Dashboard includes **10 panels** showing all data sources:
+### Hiérarchie des Classes (OWL)
 
-| Panel | Data Source | Type | Description |
-|-------|-------------|------|-------------|
-| 📈 Stocks (Yahoo API) | `fame_analytics.silver_silver_stocks` | Stat | Count: 13 stocks |
-| 💱 Forex (ECB XML) | `fame_analytics.silver_silver_forex` | Stat | Count: 215,699 rates |
-| 📊 Financials (CSV) | `fame_analytics.silver_silver_financials` | Stat | Count: 22,614 companies |
-| 🔄 Kafka Streaming | `fame_streaming.stock_quotes` | Stat | Real-time quotes |
-| 📈 Live Stock Prices | `silver_silver_stocks` | Table | Yahoo Finance data |
-| 🔄 Kafka Quotes | `stock_quotes` | Table | Streaming quotes |
-| 🚨 Real-Time Alerts | `alerts` | Table | Kafka alerts |
-| 📊 Top Companies | `silver_silver_financials` | Table | SP500/NYSE/NASDAQ |
-| 💱 Forex Rates | `silver_silver_forex` | Table | ECB exchange rates |
-| 💳 Transactions | `silver_silver_transactions` | Table | Banking transactions |
-
-### Grafana Auto-Provisioning
-
-Grafana is configured with **YAML provisioning** - no manual setup required:
-
-```yaml
-# docker/grafana/provisioning/datasources/datasources.yml
-datasources:
-  - name: PostgreSQL
-    type: grafana-postgresql-datasource
-    uid: postgres
-    url: fame-postgres:5432
-    database: fame_transactions
-    user: fame_user
-    secureJsonData:
-      password: fame_password
-    isDefault: true
+```
+fame:FinancialEntity
+├── fame:Stock              (Action boursière)
+├── fame:Currency           (Devise)
+├── fame:ExchangeRate       (Taux de change)
+├── fame:Company            (Entreprise)
+├── fame:Sector             (Secteur d'activité)
+├── fame:StockExchange      (Bourse)
+└── fame:Transaction
+    ├── fame:Transfer       (Virement)
+    ├── fame:Payment        (Paiement)
+    └── fame:Deposit        (Dépôt)
 ```
 
----
+### Propriétés (Object & Datatype)
 
-## 📚 Semantic Model (Ontology)
+```
+OBJECT PROPERTIES:
+├── fame:hasCurrency        (Stock → Currency)
+├── fame:tradedOn           (Stock → StockExchange)
+├── fame:issuedBy           (Stock → Company)
+├── fame:belongsToSector    (Company → Sector)
+├── fame:baseCurrency       (ExchangeRate → Currency)
+├── fame:targetCurrency     (ExchangeRate → Currency)
+└── fame:transactionCurrency (Transaction → Currency)
 
-### 🔧 Tools Used
+DATATYPE PROPERTIES:
+├── fame:symbol             (xsd:string)
+├── fame:price              (xsd:decimal)
+├── fame:volume             (xsd:integer)
+├── fame:marketCap          (xsd:decimal)
+├── fame:rate               (xsd:decimal)
+├── fame:amount             (xsd:decimal)
+└── fame:currencyCode       (xsd:string)
+```
 
-| Tool | Purpose | File |
-|------|---------|------|
-| **Protégé** | OWL Ontology Editor (Stanford) | `semantic/fame_ontology.owl` |
-| **Apache Jena Fuseki** | RDF Triple Store + SPARQL Server | Docker :3030 |
-| **RDFLib** | Python RDF manipulation | `semantic/rdf_generator.py` |
+### Named Graphs (Fuseki)
 
-> 💡 **Protégé** est utilisé pour créer et éditer l'ontologie OWL. Téléchargez-le sur: https://protege.stanford.edu/
+| Graph URI | Contenu |
+|-----------|---------|
+| `http://fame.eu/graph/ontology` | TBox (Classes, Propriétés) |
+| `http://fame.eu/graph/data` | ABox (Instances) |
+| `http://fame.eu/graph/vocabulary` | SKOS Concepts |
+| `http://fame.eu/graph/inferred` | Inférences RDFS |
 
-### Domains & Concepts
-
-| Domain | Concepts | Relations |
-|--------|----------|-----------|
-| **Market Data** | Stock, Exchange, Price, Volume | hasTicker, tradedOn, hasPrice |
-| **Foreign Exchange** | Currency, ExchangeRate, CentralBank | convertTo, publishedBy |
-| **Corporate Finance** | Company, FinancialStatement, Ratio | hasReport, belongsToSector |
-| **Transactions** | Transaction, Account, Bank | hasSender, hasReceiver, processedBy |
-
-### SPARQL Endpoint
-
-Access Fuseki at http://localhost:3030 to query RDF data:
+### Exemple SPARQL
 
 ```sparql
 PREFIX fame: <http://fame.eu/ontology#>
+PREFIX fdata: <http://fame.eu/data#>
 
-SELECT ?company ?stockPrice ?sector
+SELECT ?stock ?symbol ?price ?exchange
 WHERE {
-  ?company a fame:FinancialInstitution ;
-           fame:hasTicker ?ticker ;
-           fame:hasStockPrice ?stockPrice ;
-           fame:hasSector ?sector .
+  ?stock a fame:Stock ;
+         fame:symbol ?symbol ;
+         fame:price ?price ;
+         fame:tradedOn/rdfs:label ?exchange .
 }
+ORDER BY DESC(?price)
 LIMIT 10
 ```
 
 ---
 
-## 🔧 Kafka Topics
+## 🐳 Services Docker
+
+### Vue d'ensemble (12 Services)
+
+```yaml
+services:
+  zookeeper:     # Kafka coordination
+  kafka:         # Message streaming
+  kafka-ui:      # Kafka monitoring
+  spark-master:  # Spark master
+  spark-worker:  # Spark worker
+  postgres:      # Database
+  redis:         # Cache
+  fuseki:        # SPARQL endpoint
+  grafana:       # Dashboards
+  prometheus:    # Metrics
+```
+
+### Réseau & Volumes
 
 ```
-fame-stocks         # Real-time stock prices from Yahoo Finance
-fame-alerts         # Trading alerts and anomalies
-fame-forex          # Exchange rate updates
+Network: fame-dataspace-network (bridge)
+
+Volumes:
+├── fame-postgres-data    (PostgreSQL)
+├── fame-fuseki-data      (Fuseki TDB2)
+├── fame-redis-cache      (Redis)
+├── fame-grafana-data     (Grafana)
+└── fame-prometheus-data  (Prometheus)
 ```
 
 ---
 
-## 📈 Data Volume Summary
+## 🚀 Installation & Commandes
 
-| Layer | Table | Records | Source |
-|-------|-------|---------|--------|
-| **Silver** | silver_silver_stocks | 13 | Yahoo Finance API |
-| **Silver** | silver_silver_forex | 215,699 | ECB XML (20 years) |
-| **Silver** | silver_silver_financials | 22,614 | CSV (SP500/NYSE/NASDAQ) |
-| **Silver** | silver_silver_transactions | 759 | PostgreSQL |
-| **Streaming** | stock_quotes | 10+ | Kafka real-time |
-| **Streaming** | alerts | 3+ | Kafka alerts |
-| **Total** | - | **239,098+** | All sources |
+### Prérequis
+
+- Docker Desktop
+- Python 3.10+
+- pip
+
+### Commandes Complètes (A à Z)
+
+```powershell
+# ═══════════════════════════════════════════════════════════════
+# ÉTAPE 1: SETUP
+# ═══════════════════════════════════════════════════════════════
+cd c:\Users\ayakh\MasterM2\Dataspace\FAME-DataSpace
+pip install -r requirements.txt
+
+# ═══════════════════════════════════════════════════════════════
+# ÉTAPE 2: DÉMARRER DOCKER (12 services)
+# ═══════════════════════════════════════════════════════════════
+docker-compose up -d
+docker-compose ps                    # Vérifier statut
+
+# ═══════════════════════════════════════════════════════════════
+# ÉTAPE 3: CHARGER COUCHE SÉMANTIQUE (Protégé → Fuseki)
+# ═══════════════════════════════════════════════════════════════
+.\start_semantic.ps1                 # Windows PowerShell
+# ./start_semantic.sh                # Linux/Mac
+
+# Ou directement avec Python:
+python semantic/fuseki_loader.py --clear
+
+# ═══════════════════════════════════════════════════════════════
+# ÉTAPE 4: PIPELINE EtLT (Bronze → Silver → Gold)
+# ═══════════════════════════════════════════════════════════════
+python main.py pipeline
+
+# ═══════════════════════════════════════════════════════════════
+# ÉTAPE 5: STREAMING KAFKA
+# ═══════════════════════════════════════════════════════════════
+python streaming/kafka_finance_streaming.py --stock-interval 30
+
+# ═══════════════════════════════════════════════════════════════
+# ÉTAPE 6: ACCÈS AUX INTERFACES
+# ═══════════════════════════════════════════════════════════════
+# Grafana:    http://localhost:3000  (admin / admin123)
+# Fuseki:     http://localhost:3030  (admin / admin123)
+# Kafka UI:   http://localhost:8080
+# Spark:      http://localhost:8081
+# Prometheus: http://localhost:9090
+
+# ═══════════════════════════════════════════════════════════════
+# ÉTAPE 7: ARRÊT
+# ═══════════════════════════════════════════════════════════════
+docker-compose stop                  # Arrêter (garder données)
+docker-compose down                  # Supprimer conteneurs
+docker-compose down -v               # Supprimer tout
+```
+
+### Quick Start (Une commande)
+
+```powershell
+docker-compose up -d; Start-Sleep 30; .\start_semantic.ps1; python main.py pipeline
+```
 
 ---
 
-## 🛠️ Technologies Used
+## 📁 Structure du Projet
 
-| Category | Technology | Purpose |
-|----------|------------|---------|
-| **Streaming** | Apache Kafka | Real-time data ingestion |
-| **Processing** | Apache Spark | Batch & stream processing |
-| **Storage** | PostgreSQL | Relational data + analytics |
-| **Warehouse** | DuckDB | Fast OLAP queries |
-| **Semantic** | Apache Jena Fuseki | RDF triple store + SPARQL |
-| **Ontology Editor** | Protégé | OWL ontology design & editing |
-| **Visualization** | Grafana | Dashboards (YAML provisioned) |
-| **Metrics** | Prometheus | Metrics collection |
-| **Cache** | Redis | Performance caching |
-| **Container** | Docker Compose | Infrastructure orchestration |
+```
+FAME-DataSpace/
+├── 📄 docker-compose.yml           # 12 services Docker
+├── 📄 main.py                      # Point d'entrée principal
+├── 📄 requirements.txt             # Dépendances Python
+├── 📄 start_semantic.ps1           # Script démarrage Windows
+├── 📄 start_semantic.sh            # Script démarrage Linux
+│
+├── 📁 data/
+│   ├── 📁 bronze/                  # Données brutes
+│   │   ├── 📁 api/                 # JSON Yahoo Finance
+│   │   ├── 📁 csv/                 # Fichiers CSV
+│   │   ├── 📁 xml/                 # ECB XML
+│   │   └── 📁 sql/                 # Exports SQL
+│   ├── 📁 silver/                  # Données nettoyées (Parquet)
+│   ├── 📁 gold/                    # Données agrégées (Parquet)
+│   ├── 📁 rdf/                     # Fichiers RDF
+│   └── 📁 warehouse/
+│       └── fame_warehouse.duckdb   # DuckDB
+│
+├── 📁 docker/
+│   ├── 📁 fuseki/
+│   │   └── config.ttl              # Configuration Fuseki
+│   ├── 📁 grafana/
+│   │   ├── 📁 dashboards/          # JSON dashboards
+│   │   └── 📁 provisioning/        # Auto-provisioning
+│   ├── 📁 postgres/
+│   │   └── init.sql                # Initialisation DB
+│   └── 📁 prometheus/
+│       └── prometheus.yml          # Configuration metrics
+│
+├── 📁 elt/
+│   ├── extract.py                  # Extraction des 4 sources
+│   ├── transform.py                # Transformation Silver/Gold
+│   ├── load.py                     # Chargement
+│   ├── warehouse.py                # DuckDB warehouse
+│   └── main_pipeline.py            # Orchestration EtLT
+│
+├── 📁 semantic/
+│   ├── fame_data_protege.owl       # Ontologie OWL (Protégé)
+│   ├── FAME-RDF.rdf                # Instances RDF
+│   ├── FAME-SKOS.ttl               # Vocabulaire SKOS
+│   ├── fuseki_loader.py            # Chargeur Fuseki
+│   ├── fuseki_service.py           # Service CRUD/SPARQL
+│   ├── grafana_queries.py          # Requêtes pour Grafana
+│   └── sparql_queries.py           # Bibliothèque SPARQL
+│
+├── 📁 streaming/
+│   ├── kafka_finance_streaming.py  # Streaming principal
+│   ├── kafka_producer.py           # Producteur Kafka
+│   ├── kafka_consumer.py           # Consommateur Kafka
+│   └── spark_streaming.py          # Processing Spark
+│
+├── 📁 sources/
+│   ├── source1_stock_api.py        # Yahoo Finance API
+│   ├── source2_ecb_xml.py          # ECB XML Parser
+│   ├── source3_financials_csv.py   # CSV Loader
+│   └── source4_transactions_db.py  # PostgreSQL Connector
+│
+└── 📁 fabric/
+    ├── data_fabric.py              # Data Fabric Layer
+    ├── cache_manager.py            # Redis Cache
+    └── metrics_service.py          # Prometheus Metrics
+```
 
 ---
 
-## 👥 Authors
+## 📈 Volumes de Données
 
-**Master M2 - Data Space Project 2026**
+| Couche | Table | Records |
+|--------|-------|---------|
+| **Bronze** | Raw (JSON/XML/CSV) | - |
+| **Silver** | silver_stocks | 82 |
+| **Silver** | silver_forex | 215,699 |
+| **Silver** | silver_financials | 22,614 |
+| **Silver** | silver_transactions | 759 |
+| **Gold** | gold_daily_market | 10 |
+| **Gold** | gold_tx_summary | 734 |
+| **Semantic** | Fuseki triples | ~1,600 |
 
-## 📄 License
+**Total: 240,000+ records + 1,600+ triples RDF**
 
-Academic Project - All Rights Reserved
+---
+
+## 🔧 Dépannage
+
+```powershell
+# Vérifier services Docker
+docker-compose ps
+docker-compose logs fuseki
+docker-compose logs kafka
+
+# Tester Fuseki
+curl http://localhost:3030/$/ping
+
+# Tester Kafka
+docker exec fame-kafka kafka-topics --list --bootstrap-server localhost:9092
+
+# Tester PostgreSQL
+docker exec fame-postgres pg_isready -U fame_user
+
+# Redémarrer un service
+docker-compose restart fuseki
+```
+
+---
+
+## 👥 Auteur
+
+**Master M2 - Projet Data Space**
+
+## 📜 Licence
+
+Projet à but éducatif (Master M2).

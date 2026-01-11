@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+    xmlns:schema="http://schema.org/"
+    xmlns:fame="http://fame.eu/ontology#"
+    xmlns:data="http://fame.eu/data#">
+
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     NAMESPACE DECLARATIONS AND ONTOLOGY METADATA
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdf:Description rdf:about="http://fame.eu/ontology">
+    <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/>
+    <dc:title xml:lang="en">FAME Financial Data Space RDF Vocabulary</dc:title>
+    <dc:title xml:lang="fr">Vocabulaire RDF de l'Espace de Données Financières FAME</dc:title>
+    <dc:creator>FAME Data Space Project - Master M2</dc:creator>
+    <dc:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-11</dc:date>
+    <dc:description xml:lang="en">RDF vocabulary for financial entities with data from Yahoo Finance API (JSON), ECB Exchange Rates (XML), Company Financials (CSV), and PostgreSQL Transactions</dc:description>
+    <dc:description xml:lang="fr">Vocabulaire RDF pour entités financières avec données de l'API Yahoo Finance (JSON), Taux de Change BCE (XML), Données Financières d'Entreprises (CSV) et Transactions PostgreSQL</dc:description>
+    <dcterms:license rdf:resource="http://creativecommons.org/licenses/by/4.0/"/>
+    <dc:language>en</dc:language>
+    <dc:language>fr</dc:language>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     RDFS CLASS DEFINITIONS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Core Financial Entity Class
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#FinancialEntity">
+    <rdfs:label xml:lang="en">Financial Entity</rdfs:label>
+    <rdfs:label xml:lang="fr">Entité Financière</rdfs:label>
+    <rdfs:comment xml:lang="en">A resource representing any entity in the financial domain</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Une ressource représentant toute entité du domaine financier</rdfs:comment>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdfs:Class>
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Financial Instruments
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Stock">
+    <rdfs:label xml:lang="en">Stock</rdfs:label>
+    <rdfs:label xml:lang="fr">Action</rdfs:label>
+    <rdfs:comment xml:lang="en">Equity security representing ownership in a corporation</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Titre de propriété représentant une participation dans une société</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+    <dcterms:source>Yahoo Finance API (JSON)</dcterms:source>
+</rdfs:Class>
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Currency">
+    <rdfs:label xml:lang="en">Currency</rdfs:label>
+    <rdfs:label xml:lang="fr">Devise</rdfs:label>
+    <rdfs:comment xml:lang="en">System of money in general use in a particular country</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Système monétaire utilisé dans un pays particulier</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+    <dcterms:source>ECB Exchange Rates (XML)</dcterms:source>
+</rdfs:Class>
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#ExchangeRate">
+    <rdfs:label xml:lang="en">Exchange Rate</rdfs:label>
+    <rdfs:label xml:lang="fr">Taux de Change</rdfs:label>
+    <rdfs:comment xml:lang="en">Rate at which one currency will be exchanged for another</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Taux auquel une devise sera échangée contre une autre</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+    <dcterms:source>ECB Exchange Rates (XML)</dcterms:source>
+</rdfs:Class>
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Economic Actors
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Company">
+    <rdfs:label xml:lang="en">Company</rdfs:label>
+    <rdfs:label xml:lang="fr">Entreprise</rdfs:label>
+    <rdfs:comment xml:lang="en">Legal entity representing a business organization</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Entité légale représentant une organisation commerciale</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:subClassOf rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:subClassOf rdf:resource="http://schema.org/Organization"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+    <dcterms:source>S&amp;P500/NYSE/NASDAQ CSV Files</dcterms:source>
+</rdfs:Class>
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Sector">
+    <rdfs:label xml:lang="en">Industry Sector</rdfs:label>
+    <rdfs:label xml:lang="fr">Secteur d'Activité</rdfs:label>
+    <rdfs:comment xml:lang="en">Category of business activity within the economy</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Catégorie d'activité économique au sein de l'économie</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdfs:Class>
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Transactions
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Transaction">
+    <rdfs:label xml:lang="en">Transaction</rdfs:label>
+    <rdfs:label xml:lang="fr">Transaction</rdfs:label>
+    <rdfs:comment xml:lang="en">Exchange or transfer of goods, services, or funds</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Échange ou transfert de biens, services ou fonds</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+    <dcterms:source>PostgreSQL Transactions Database</dcterms:source>
+</rdfs:Class>
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Transfer">
+    <rdfs:label xml:lang="en">Transfer</rdfs:label>
+    <rdfs:label xml:lang="fr">Virement</rdfs:label>
+    <rdfs:comment xml:lang="en">Movement of funds from one account to another</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#Transaction"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdfs:Class>
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Payment">
+    <rdfs:label xml:lang="en">Payment</rdfs:label>
+    <rdfs:label xml:lang="fr">Paiement</rdfs:label>
+    <rdfs:comment xml:lang="en">Transfer of value to settle an obligation</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#Transaction"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdfs:Class>
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#Deposit">
+    <rdfs:label xml:lang="en">Deposit</rdfs:label>
+    <rdfs:label xml:lang="fr">Dépôt</rdfs:label>
+    <rdfs:comment xml:lang="en">Placement of funds into an account</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#Transaction"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdfs:Class>
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Infrastructure
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#StockExchange">
+    <rdfs:label xml:lang="en">Stock Exchange</rdfs:label>
+    <rdfs:label xml:lang="fr">Bourse</rdfs:label>
+    <rdfs:comment xml:lang="en">Marketplace where securities are traded</rdfs:comment>
+    <rdfs:comment xml:lang="fr">Marché où les titres sont négociés</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:subClassOf rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdfs:Class>
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Data Sources (Provenance)
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdfs:Class rdf:about="http://fame.eu/ontology#DataSource">
+    <rdfs:label xml:lang="en">Data Source</rdfs:label>
+    <rdfs:label xml:lang="fr">Source de Données</rdfs:label>
+    <rdfs:comment xml:lang="en">Origin of data for provenance tracking</rdfs:comment>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdfs:Class>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     RDF PROPERTY DEFINITIONS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Object Properties (Relations between resources)
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdf:Property rdf:about="http://fame.eu/ontology#hasCurrency">
+    <rdfs:label xml:lang="en">has currency</rdfs:label>
+    <rdfs:label xml:lang="fr">a pour devise</rdfs:label>
+    <rdfs:comment xml:lang="en">Links a financial instrument to its currency</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#tradedOn">
+    <rdfs:label xml:lang="en">traded on</rdfs:label>
+    <rdfs:label xml:lang="fr">négocié sur</rdfs:label>
+    <rdfs:comment xml:lang="en">Stock exchange where a security is traded</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#StockExchange"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#issuedBy">
+    <rdfs:label xml:lang="en">issued by</rdfs:label>
+    <rdfs:label xml:lang="fr">émis par</rdfs:label>
+    <rdfs:comment xml:lang="en">Company that issued the stock</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#belongsToSector">
+    <rdfs:label xml:lang="en">belongs to sector</rdfs:label>
+    <rdfs:label xml:lang="fr">appartient au secteur</rdfs:label>
+    <rdfs:comment xml:lang="en">Industry sector of a company</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#Sector"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#baseCurrency">
+    <rdfs:label xml:lang="en">base currency</rdfs:label>
+    <rdfs:label xml:lang="fr">devise de base</rdfs:label>
+    <rdfs:comment xml:lang="en">The currency being converted from</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#targetCurrency">
+    <rdfs:label xml:lang="en">target currency</rdfs:label>
+    <rdfs:label xml:lang="fr">devise cible</rdfs:label>
+    <rdfs:comment xml:lang="en">The currency being converted to</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#transactionCurrency">
+    <rdfs:label xml:lang="en">transaction currency</rdfs:label>
+    <rdfs:label xml:lang="fr">devise de transaction</rdfs:label>
+    <rdfs:comment xml:lang="en">Currency in which a transaction is denominated</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Transaction"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#hasSource">
+    <rdfs:label xml:lang="en">has data source</rdfs:label>
+    <rdfs:label xml:lang="fr">a pour source de données</rdfs:label>
+    <rdfs:comment xml:lang="en">Provenance link to data source</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#FinancialEntity"/>
+    <rdfs:range rdf:resource="http://fame.eu/ontology#DataSource"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<!-- ─────────────────────────────────────────────────────────────────────────── 
+     Datatype Properties (Literal values)
+     ─────────────────────────────────────────────────────────────────────────── -->
+
+<rdf:Property rdf:about="http://fame.eu/ontology#symbol">
+    <rdfs:label xml:lang="en">ticker symbol</rdfs:label>
+    <rdfs:label xml:lang="fr">symbole boursier</rdfs:label>
+    <rdfs:comment xml:lang="en">Trading symbol for a stock</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#price">
+    <rdfs:label xml:lang="en">current price</rdfs:label>
+    <rdfs:label xml:lang="fr">prix actuel</rdfs:label>
+    <rdfs:comment xml:lang="en">Current trading price of a stock</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#volume">
+    <rdfs:label xml:lang="en">trading volume</rdfs:label>
+    <rdfs:label xml:lang="fr">volume d'échanges</rdfs:label>
+    <rdfs:comment xml:lang="en">Number of shares traded</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#marketCap">
+    <rdfs:label xml:lang="en">market capitalization</rdfs:label>
+    <rdfs:label xml:lang="fr">capitalisation boursière</rdfs:label>
+    <rdfs:comment xml:lang="en">Total market value of outstanding shares</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#currencyCode">
+    <rdfs:label xml:lang="en">currency code</rdfs:label>
+    <rdfs:label xml:lang="fr">code de devise</rdfs:label>
+    <rdfs:comment xml:lang="en">ISO 4217 currency code</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#rate">
+    <rdfs:label xml:lang="en">exchange rate</rdfs:label>
+    <rdfs:label xml:lang="fr">taux de change</rdfs:label>
+    <rdfs:comment xml:lang="en">Conversion rate between currencies</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#amount">
+    <rdfs:label xml:lang="en">amount</rdfs:label>
+    <rdfs:label xml:lang="fr">montant</rdfs:label>
+    <rdfs:comment xml:lang="en">Monetary amount of a transaction</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Transaction"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#transactionId">
+    <rdfs:label xml:lang="en">transaction ID</rdfs:label>
+    <rdfs:label xml:lang="fr">identifiant de transaction</rdfs:label>
+    <rdfs:comment xml:lang="en">Unique identifier for a transaction</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Transaction"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://fame.eu/ontology#status">
+    <rdfs:label xml:lang="en">transaction status</rdfs:label>
+    <rdfs:label xml:lang="fr">statut de transaction</rdfs:label>
+    <rdfs:comment xml:lang="en">Current status of a transaction</rdfs:comment>
+    <rdfs:domain rdf:resource="http://fame.eu/ontology#Transaction"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:isDefinedBy rdf:resource="http://fame.eu/ontology"/>
+</rdf:Property>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DATA SOURCE INSTANCES (Provenance)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#YahooFinanceAPI">
+    <rdf:type rdf:resource="http://fame.eu/ontology#DataSource"/>
+    <rdfs:label>Yahoo Finance API</rdfs:label>
+    <dc:description>Real-time stock data via REST API (JSON format)</dc:description>
+    <dcterms:format>application/json</dcterms:format>
+    <fame:sourceType>REST API</fame:sourceType>
+    <fame:sourceURL>https://query1.finance.yahoo.com/v8/finance/chart/</fame:sourceURL>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#ECB_XML">
+    <rdf:type rdf:resource="http://fame.eu/ontology#DataSource"/>
+    <rdfs:label>ECB Exchange Rates</rdfs:label>
+    <dc:description>European Central Bank forex rates (XML format)</dc:description>
+    <dcterms:format>application/xml</dcterms:format>
+    <fame:sourceType>XML Feed</fame:sourceType>
+    <fame:sourceURL>https://www.ecb.europa.eu/stats/eurofxref/</fame:sourceURL>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#CSV_Financials">
+    <rdf:type rdf:resource="http://fame.eu/ontology#DataSource"/>
+    <rdfs:label>CSV Financial Data</rdfs:label>
+    <dc:description>S&amp;P500, NYSE, NASDAQ listings (CSV format)</dc:description>
+    <dcterms:format>text/csv</dcterms:format>
+    <fame:sourceType>File System</fame:sourceType>
+    <fame:recordCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">22614</fame:recordCount>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#PostgreSQL_Transactions">
+    <rdf:type rdf:resource="http://fame.eu/ontology#DataSource"/>
+    <rdfs:label>PostgreSQL Transactions</rdfs:label>
+    <dc:description>Financial transactions database (SQL format)</dc:description>
+    <dcterms:format>application/sql</dcterms:format>
+    <fame:sourceType>Relational Database</fame:sourceType>
+    <fame:recordCount rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">759</fame:recordCount>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     STOCK EXCHANGES
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#NASDAQ">
+    <rdf:type rdf:resource="http://fame.eu/ontology#StockExchange"/>
+    <rdfs:label>NASDAQ</rdfs:label>
+    <foaf:name>NASDAQ</foaf:name>
+    <fame:exchangeCode>NMS</fame:exchangeCode>
+    <vcard:country-name>United States</vcard:country-name>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressCountry>US</schema:addressCountry>
+            <schema:addressLocality>New York</schema:addressLocality>
+        </schema:PostalAddress>
+    </schema:address>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/NASDAQ"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#NYSE">
+    <rdf:type rdf:resource="http://fame.eu/ontology#StockExchange"/>
+    <rdfs:label>New York Stock Exchange</rdfs:label>
+    <foaf:name>New York Stock Exchange</foaf:name>
+    <fame:exchangeCode>NYQ</fame:exchangeCode>
+    <vcard:country-name>United States</vcard:country-name>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressCountry>US</schema:addressCountry>
+            <schema:addressLocality>New York</schema:addressLocality>
+            <schema:streetAddress>11 Wall Street</schema:streetAddress>
+        </schema:PostalAddress>
+    </schema:address>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/New_York_Stock_Exchange"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#EURONEXT_Paris">
+    <rdf:type rdf:resource="http://fame.eu/ontology#StockExchange"/>
+    <rdfs:label xml:lang="fr">Euronext Paris</rdfs:label>
+    <foaf:name>Euronext Paris</foaf:name>
+    <fame:exchangeCode>PAR</fame:exchangeCode>
+    <vcard:country-name>France</vcard:country-name>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressCountry>FR</schema:addressCountry>
+            <schema:addressLocality>Paris</schema:addressLocality>
+        </schema:PostalAddress>
+    </schema:address>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Euronext_Paris"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#XETRA">
+    <rdf:type rdf:resource="http://fame.eu/ontology#StockExchange"/>
+    <rdfs:label>XETRA Frankfurt</rdfs:label>
+    <foaf:name>XETRA Frankfurt</foaf:name>
+    <fame:exchangeCode>GER</fame:exchangeCode>
+    <vcard:country-name>Germany</vcard:country-name>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressCountry>DE</schema:addressCountry>
+            <schema:addressLocality>Frankfurt</schema:addressLocality>
+        </schema:PostalAddress>
+    </schema:address>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Xetra_(trading_system)"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#LSE">
+    <rdf:type rdf:resource="http://fame.eu/ontology#StockExchange"/>
+    <rdfs:label>London Stock Exchange</rdfs:label>
+    <foaf:name>London Stock Exchange</foaf:name>
+    <fame:exchangeCode>LON</fame:exchangeCode>
+    <vcard:country-name>United Kingdom</vcard:country-name>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressCountry>GB</schema:addressCountry>
+            <schema:addressLocality>London</schema:addressLocality>
+        </schema:PostalAddress>
+    </schema:address>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/London_Stock_Exchange"/>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CURRENCIES
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#EUR">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:label xml:lang="en">Euro</rdfs:label>
+    <rdfs:label xml:lang="fr">Euro</rdfs:label>
+    <fame:currencyCode>EUR</fame:currencyCode>
+    <fame:currencySymbol>€</fame:currencySymbol>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+    <dcterms:description xml:lang="en">Official currency of the European Union</dcterms:description>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Euro"/>
+    <rdfs:seeAlso rdf:resource="http://www.wikidata.org/entity/Q4916"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#USD">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:label xml:lang="en">US Dollar</rdfs:label>
+    <rdfs:label xml:lang="fr">Dollar Américain</rdfs:label>
+    <fame:currencyCode>USD</fame:currencyCode>
+    <fame:currencySymbol>$</fame:currencySymbol>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+    <dcterms:description xml:lang="en">Official currency of the United States</dcterms:description>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/United_States_dollar"/>
+    <rdfs:seeAlso rdf:resource="http://www.wikidata.org/entity/Q4917"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#GBP">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:label xml:lang="en">British Pound Sterling</rdfs:label>
+    <rdfs:label xml:lang="fr">Livre Sterling</rdfs:label>
+    <fame:currencyCode>GBP</fame:currencyCode>
+    <fame:currencySymbol>£</fame:currencySymbol>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+    <dcterms:description xml:lang="en">Official currency of the United Kingdom</dcterms:description>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Pound_sterling"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#JPY">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:label xml:lang="en">Japanese Yen</rdfs:label>
+    <rdfs:label xml:lang="fr">Yen Japonais</rdfs:label>
+    <fame:currencyCode>JPY</fame:currencyCode>
+    <fame:currencySymbol>¥</fame:currencySymbol>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Japanese_yen"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#CHF">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:label xml:lang="en">Swiss Franc</rdfs:label>
+    <rdfs:label xml:lang="fr">Franc Suisse</rdfs:label>
+    <fame:currencyCode>CHF</fame:currencyCode>
+    <fame:currencySymbol>CHF</fame:currencySymbol>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Swiss_franc"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#CNY">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Currency"/>
+    <rdfs:label xml:lang="en">Chinese Yuan</rdfs:label>
+    <rdfs:label xml:lang="fr">Yuan Chinois</rdfs:label>
+    <fame:currencyCode>CNY</fame:currencyCode>
+    <fame:currencySymbol>¥</fame:currencySymbol>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Renminbi"/>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTORS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#Technology">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Sector"/>
+    <rdfs:label xml:lang="en">Information Technology</rdfs:label>
+    <rdfs:label xml:lang="fr">Technologies de l'Information</rdfs:label>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <dcterms:description>Software, hardware, semiconductors, and IT services</dcterms:description>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#Financials">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Sector"/>
+    <rdfs:label xml:lang="en">Financials</rdfs:label>
+    <rdfs:label xml:lang="fr">Services Financiers</rdfs:label>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <dcterms:description>Banks, insurance, investment firms, and real estate</dcterms:description>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#Healthcare">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Sector"/>
+    <rdfs:label xml:lang="en">Health Care</rdfs:label>
+    <rdfs:label xml:lang="fr">Santé</rdfs:label>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <dcterms:description>Pharmaceuticals, biotechnology, and medical devices</dcterms:description>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#ConsumerDiscretionary">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Sector"/>
+    <rdfs:label xml:lang="en">Consumer Discretionary</rdfs:label>
+    <rdfs:label xml:lang="fr">Consommation Discrétionnaire</rdfs:label>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <dcterms:description>Retail, automotive, entertainment, and luxury goods</dcterms:description>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#Communication">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Sector"/>
+    <rdfs:label xml:lang="en">Communication Services</rdfs:label>
+    <rdfs:label xml:lang="fr">Services de Communication</rdfs:label>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <dcterms:description>Telecommunications, media, and entertainment</dcterms:description>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     COMPANIES
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#Apple_Inc">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdf:type rdf:resource="http://schema.org/Corporation"/>
+    <rdfs:label>Apple Inc.</rdfs:label>
+    <foaf:name>Apple Inc.</foaf:name>
+    <schema:name>Apple Inc.</schema:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Technology"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <vcard:organization-name>Apple Inc.</vcard:organization-name>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>Cupertino</schema:addressLocality>
+            <schema:addressRegion>California</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://www.apple.com"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Apple_Inc."/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#Microsoft_Corp">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>Microsoft Corporation</rdfs:label>
+    <foaf:name>Microsoft Corporation</foaf:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Technology"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>Redmond</schema:addressLocality>
+            <schema:addressRegion>Washington</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://www.microsoft.com"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Microsoft"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#Alphabet_Inc">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>Alphabet Inc.</rdfs:label>
+    <foaf:name>Alphabet Inc.</foaf:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Communication"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>Mountain View</schema:addressLocality>
+            <schema:addressRegion>California</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://abc.xyz"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Alphabet_Inc."/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#JPMorgan_Chase">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>JPMorgan Chase &amp; Co.</rdfs:label>
+    <foaf:name>JPMorgan Chase &amp; Co.</foaf:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Financials"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>New York</schema:addressLocality>
+            <schema:addressRegion>New York</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://www.jpmorganchase.com"/>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     STOCKS (with full relationships)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#AAPL">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>Apple Inc. (AAPL)</rdfs:label>
+    <fame:symbol>AAPL</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">259.37</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">45123456</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4000000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NASDAQ"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#Apple_Inc"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+    <rdfs:seeAlso rdf:resource="https://finance.yahoo.com/quote/AAPL"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#MSFT">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>Microsoft Corporation (MSFT)</rdfs:label>
+    <fame:symbol>MSFT</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">425.22</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">22345678</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3200000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NASDAQ"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#Microsoft_Corp"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+    <rdfs:seeAlso rdf:resource="https://finance.yahoo.com/quote/MSFT"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#GOOGL">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>Alphabet Inc. (GOOGL)</rdfs:label>
+    <fame:symbol>GOOGL</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">197.94</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">18765432</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2450000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NASDAQ"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#Alphabet_Inc"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#JPM">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>JPMorgan Chase (JPM)</rdfs:label>
+    <fame:symbol>JPM</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">252.50</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8765432</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">720000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NYSE"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#JPMorgan_Chase"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     EXCHANGE RATES
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#EUR_USD_20260110">
+    <rdf:type rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:label>EUR/USD 2026-01-10</rdfs:label>
+    <fame:baseCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:targetCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:rate rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.0825</fame:rate>
+    <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-10</dcterms:date>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#EUR_GBP_20260110">
+    <rdf:type rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:label>EUR/GBP 2026-01-10</rdfs:label>
+    <fame:baseCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:targetCurrency rdf:resource="http://fame.eu/data#GBP"/>
+    <fame:rate rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0.8325</fame:rate>
+    <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-10</dcterms:date>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#EUR_JPY_20260110">
+    <rdf:type rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:label>EUR/JPY 2026-01-10</rdfs:label>
+    <fame:baseCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:targetCurrency rdf:resource="http://fame.eu/data#JPY"/>
+    <fame:rate rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">162.45</fame:rate>
+    <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-10</dcterms:date>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     TRANSACTIONS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_001">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Transfer"/>
+    <rdfs:label>Transfer TX-001</rdfs:label>
+    <fame:transactionId>TX-2026-001-ABC123</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15000.00</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:senderName>Société Alpha SAS</fame:senderName>
+    <fame:receiverName>Beta Industries GmbH</fame:receiverName>
+    <fame:status>COMPLETED</fame:status>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T14:32:15Z</dcterms:created>
+    <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_002">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Payment"/>
+    <rdfs:label>Payment TX-002</rdfs:label>
+    <fame:transactionId>TX-2026-002-DEF456</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2500.50</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:senderName>TechCorp Inc.</fame:senderName>
+    <fame:receiverName>CloudServices LLC</fame:receiverName>
+    <fame:status>COMPLETED</fame:status>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T09:15:42Z</dcterms:created>
+    <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_003">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Transfer"/>
+    <rdfs:label>Transfer TX-003</rdfs:label>
+    <fame:transactionId>TX-2026-003-GHI789</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">75000.00</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#GBP"/>
+    <fame:senderName>London Financial Ltd</fame:senderName>
+    <fame:receiverName>Paris Trading SA</fame:receiverName>
+    <fame:status>PENDING</fame:status>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T16:45:30Z</dcterms:created>
+    <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_004">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Deposit"/>
+    <rdfs:label>Deposit TX-004</rdfs:label>
+    <fame:transactionId>TX-2026-004-JKL012</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">50000.00</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:senderName>Investment Fund Alpha</fame:senderName>
+    <fame:receiverName>Private Bank AG</fame:receiverName>
+    <fame:status>COMPLETED</fame:status>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T11:22:18Z</dcterms:created>
+    <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
+</rdf:Description>
+

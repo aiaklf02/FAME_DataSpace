@@ -1,0 +1,524 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix fame: <http://fame.eu/skos#> .
+@prefix data: <http://fame.eu/data#> .
+
+
+# ───────────────────────────────────────────────────────────────
+# CONCEPT SCHEME PRINCIPAL
+# ───────────────────────────────────────────────────────────────
+
+fame:scheme a skos:ConceptScheme ;
+    dc:title "FAME Financial Data Space Concept Scheme"@en ,
+             "Schéma de Concepts FAME pour les Données Financières"@fr ;
+    dc:creator "FAME Data Space Project - Master M2" ;
+    dc:date "2026-01-11"^^xsd:date ;
+    dcterms:description """SKOS vocabulary for financial entities integrating 
+        4 heterogeneous data sources (Yahoo API, ECB XML, CSV, PostgreSQL)"""@en ,
+        """Vocabulaire SKOS pour entités financières intégrant 
+        4 sources de données hétérogènes (API Yahoo, XML ECB, CSV, PostgreSQL)"""@fr ;
+    skos:hasTopConcept fame:FinancialEntity .
+
+# ───────────────────────────────────────────────────────────────
+# TOP CONCEPT
+# ───────────────────────────────────────────────────────────────
+
+fame:FinancialEntity a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:topConceptOf fame:scheme ;
+    skos:prefLabel "Financial Entity"@en , "Entité Financière"@fr ;
+    skos:definition """Any entity in the financial domain, including securities, 
+        currencies, companies, and transactions"""@en ,
+        """Toute entité du domaine financier, incluant titres, devises, 
+        entreprises et transactions"""@fr ;
+    skos:narrower fame:Stock , fame:Currency , fame:ExchangeRate ,
+                  fame:Company , fame:Transaction , fame:StockExchange ,
+                  fame:Sector .
+
+# ───────────────────────────────────────────────────────────────
+# INSTRUMENTS FINANCIERS
+# ───────────────────────────────────────────────────────────────
+
+fame:Stock a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Stock"@en , "Action"@fr ;
+    skos:altLabel "Equity"@en , "Share"@en , "Titre"@fr ;
+    skos:definition """Equity security representing ownership in a corporation, 
+        traded on stock exchanges"""@en ,
+        """Titre de propriété représentant une part de capital dans une société"""@fr ;
+    skos:broader fame:FinancialEntity ;
+    skos:related fame:StockExchange , fame:Company , fame:Currency ;
+    dcterms:source "Yahoo Finance API (JSON)" ;
+    skos:example data:AAPL , data:MSFT , data:GOOGL ;
+    skos:scopeNote "Includes common stocks, preferred stocks, and ETFs"@en .
+
+fame:Currency a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Currency"@en , "Devise"@fr ;
+    skos:altLabel "Money"@en , "Monnaie"@fr , "Forex"@en ;
+    skos:definition """System of money in general use in a particular country 
+        or economic zone"""@en ,
+        """Système monétaire utilisé dans un pays ou une zone économique"""@fr ;
+    skos:broader fame:FinancialEntity ;
+    skos:related fame:ExchangeRate , fame:Transaction ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:example data:EUR , data:USD , data:GBP ;
+    skos:narrower data:EUR , data:USD , data:GBP , data:JPY , 
+                  data:CHF , data:CNY , data:AUD , data:CAD .
+
+fame:ExchangeRate a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Exchange Rate"@en , "Taux de Change"@fr ;
+    skos:altLabel "Forex Rate"@en , "FX Rate"@en , "Currency Rate"@en ;
+    skos:definition """Rate at which one currency can be exchanged for another"""@en ,
+        """Taux auquel une devise peut être échangée contre une autre"""@fr ;
+    skos:broader fame:FinancialEntity ;
+    skos:related fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:scopeNote "215,699 exchange rate records available"@en .
+
+# ───────────────────────────────────────────────────────────────
+# ACTEURS ÉCONOMIQUES
+# ───────────────────────────────────────────────────────────────
+
+fame:Company a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Company"@en , "Entreprise"@fr ;
+    skos:altLabel "Corporation"@en , "Firm"@en , "Business"@en , "Société"@fr ;
+    skos:definition """Legal entity representing an association of people or 
+        a business organization"""@en ,
+        """Entité légale représentant une association de personnes ou 
+        une organisation commerciale"""@fr ;
+    skos:broader fame:FinancialEntity ;
+    skos:related fame:Sector , fame:Stock ;
+    dcterms:source "S&P500/NYSE/NASDAQ CSV Files" ;
+    skos:example data:Apple_Inc , data:Microsoft_Corp , data:Alphabet_Inc ;
+    skos:scopeNote "22,614 company records available"@en .
+
+fame:Sector a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Industry Sector"@en , "Secteur d'Activité"@fr ;
+    skos:altLabel "Business Sector"@en , "Industry"@en , "Secteur"@fr ;
+    skos:definition """Category of business activity within the economy"""@en ,
+        """Catégorie d'activité économique au sein de l'économie"""@fr ;
+    skos:broader fame:FinancialEntity ;
+    skos:related fame:Company ;
+    dcterms:source "CSV Financial Data" ;
+    skos:narrower data:Technology , data:Financials , data:Healthcare ,
+                  data:ConsumerDiscretionary , data:Communication ,
+                  data:Industrials , data:Energy .
+
+# ───────────────────────────────────────────────────────────────
+# TRANSACTIONS
+# ───────────────────────────────────────────────────────────────
+
+fame:Transaction a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Transaction"@en , "Transaction"@fr ;
+    skos:altLabel "Financial Operation"@en , "Opération Financière"@fr ;
+    skos:definition """Exchange or transfer of goods, services, or funds 
+        between parties"""@en ,
+        """Échange ou transfert de biens, services ou fonds entre parties"""@fr ;
+    skos:broader fame:FinancialEntity ;
+    skos:narrower fame:Transfer , fame:Payment , fame:Deposit ;
+    skos:related fame:Currency ;
+    dcterms:source "PostgreSQL Transactions Database" ;
+    skos:scopeNote "759 transaction records available"@en .
+
+fame:Transfer a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Transfer"@en , "Virement"@fr ;
+    skos:altLabel "Wire Transfer"@en , "Bank Transfer"@en ;
+    skos:definition """Movement of funds from one account to another"""@en ,
+        """Mouvement de fonds d'un compte vers un autre"""@fr ;
+    skos:broader fame:Transaction ;
+    dcterms:source "PostgreSQL Transactions Database" .
+
+fame:Payment a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Payment"@en , "Paiement"@fr ;
+    skos:altLabel "Settlement"@en , "Disbursement"@en ;
+    skos:definition """Transfer of value to settle an obligation or debt"""@en ,
+        """Transfert de valeur pour régler une obligation ou une dette"""@fr ;
+    skos:broader fame:Transaction ;
+    dcterms:source "PostgreSQL Transactions Database" .
+
+fame:Deposit a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Deposit"@en , "Dépôt"@fr ;
+    skos:altLabel "Bank Deposit"@en , "Account Deposit"@en ;
+    skos:definition """Placement of funds into a financial institution account"""@en ,
+        """Placement de fonds dans un compte d'institution financière"""@fr ;
+    skos:broader fame:Transaction ;
+    dcterms:source "PostgreSQL Transactions Database" .
+
+# ───────────────────────────────────────────────────────────────
+# INFRASTRUCTURE
+# ───────────────────────────────────────────────────────────────
+
+fame:StockExchange a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Stock Exchange"@en , "Bourse"@fr ;
+    skos:altLabel "Stock Market"@en , "Exchange"@en , "Marché Boursier"@fr ;
+    skos:definition """Marketplace where securities are bought and sold"""@en ,
+        """Marché où les titres sont achetés et vendus"""@fr ;
+    skos:broader fame:FinancialEntity ;
+    skos:related fame:Stock ;
+    skos:narrower data:NASDAQ , data:NYSE , data:EURONEXT_Paris ,
+                  data:XETRA , data:LSE .
+
+# ═══════════════════════════════════════════════════════════════
+# COLLECTIONS SKOS
+# ═══════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────
+# COLLECTION: BOURSES MONDIALES
+# ───────────────────────────────────────────────────────────────
+
+fame:StockExchangesCollection a skos:Collection ;
+    skos:prefLabel "Global Stock Exchanges"@en , "Bourses Mondiales"@fr ;
+    skos:member data:NASDAQ , data:NYSE , data:EURONEXT_Paris ,
+                data:XETRA , data:LSE .
+
+data:NASDAQ a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "NASDAQ" ;
+    skos:notation "NMS" ;
+    skos:definition """American stock exchange based in New York, second-largest 
+        exchange in the world by market capitalization"""@en ;
+    skos:broader fame:StockExchange ;
+    dcterms:spatial "United States" ;
+    skos:related data:AAPL , data:MSFT , data:GOOGL .
+
+data:NYSE a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "New York Stock Exchange"@en ;
+    skos:altLabel "NYSE" ;
+    skos:notation "NYQ" ;
+    skos:definition """Largest stock exchange in the world by market capitalization, 
+        located on Wall Street"""@en ;
+    skos:broader fame:StockExchange ;
+    dcterms:spatial "United States" ;
+    skos:related data:JPM , data:V , data:MA .
+
+data:EURONEXT_Paris a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Euronext Paris"@en , "Euronext Paris"@fr ;
+    skos:notation "PAR" ;
+    skos:definition """Principal marché boursier français, partie du groupe Euronext"""@fr ,
+        """Main French stock exchange, part of Euronext group"""@en ;
+    skos:broader fame:StockExchange ;
+    dcterms:spatial "France" ;
+    skos:related data:BNP_PA .
+
+data:XETRA a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "XETRA Frankfurt"@en ;
+    skos:notation "GER" ;
+    skos:definition """Electronic trading system operated by Deutsche Börse"""@en ;
+    skos:broader fame:StockExchange ;
+    dcterms:spatial "Germany" ;
+    skos:related data:DBK_DE .
+
+data:LSE a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "London Stock Exchange"@en ;
+    skos:altLabel "LSE" ;
+    skos:notation "LON" ;
+    skos:definition """Primary stock exchange in the United Kingdom and one of 
+        the oldest in the world"""@en ;
+    skos:broader fame:StockExchange ;
+    dcterms:spatial "United Kingdom" ;
+    skos:related data:HSBA_L .
+
+# ───────────────────────────────────────────────────────────────
+# COLLECTION: DEVISES PRINCIPALES
+# ───────────────────────────────────────────────────────────────
+
+fame:MajorCurrenciesCollection a skos:Collection ;
+    skos:prefLabel "Major World Currencies"@en , "Devises Mondiales Principales"@fr ;
+    skos:member data:EUR , data:USD , data:GBP , data:JPY ,
+                data:CHF , data:CNY , data:AUD , data:CAD .
+
+data:EUR a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Euro"@en , "Euro"@fr ;
+    skos:notation "EUR" ;
+    skos:altLabel "€" ;
+    skos:definition """Official currency of the European Union, used by 19 member states"""@en ,
+        """Monnaie officielle de l'Union européenne, utilisée par 19 États membres"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/Euro> .
+
+data:USD a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "US Dollar"@en , "Dollar Américain"@fr ;
+    skos:notation "USD" ;
+    skos:altLabel "$" , "Dollar" ;
+    skos:definition """Official currency of the United States and world's primary 
+        reserve currency"""@en ,
+        """Monnaie officielle des États-Unis et principale devise de réserve mondiale"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/United_States_dollar> .
+
+data:GBP a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "British Pound Sterling"@en , "Livre Sterling"@fr ;
+    skos:notation "GBP" ;
+    skos:altLabel "£" , "Pound" , "Sterling" ;
+    skos:definition """Official currency of the United Kingdom"""@en ,
+        """Monnaie officielle du Royaume-Uni"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/Pound_sterling> .
+
+data:JPY a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Japanese Yen"@en , "Yen Japonais"@fr ;
+    skos:notation "JPY" ;
+    skos:altLabel "¥" , "Yen" ;
+    skos:definition """Official currency of Japan, third most traded currency 
+        in foreign exchange markets"""@en ,
+        """Monnaie officielle du Japon, troisième devise la plus échangée"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/Japanese_yen> .
+
+data:CHF a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Swiss Franc"@en , "Franc Suisse"@fr ;
+    skos:notation "CHF" ;
+    skos:altLabel "Franc" ;
+    skos:definition """Official currency of Switzerland and Liechtenstein"""@en ,
+        """Monnaie officielle de la Suisse et du Liechtenstein"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/Swiss_franc> .
+
+data:CNY a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Chinese Yuan"@en , "Yuan Chinois"@fr ;
+    skos:notation "CNY" ;
+    skos:altLabel "Renminbi" , "RMB" , "¥" ;
+    skos:definition """Official currency of the People's Republic of China"""@en ,
+        """Monnaie officielle de la République populaire de Chine"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/Renminbi> .
+
+data:AUD a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Australian Dollar"@en , "Dollar Australien"@fr ;
+    skos:notation "AUD" ;
+    skos:altLabel "Aussie Dollar" ;
+    skos:definition """Official currency of Australia and its territories"""@en ,
+        """Monnaie officielle de l'Australie et de ses territoires"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/Australian_dollar> .
+
+data:CAD a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Canadian Dollar"@en , "Dollar Canadien"@fr ;
+    skos:notation "CAD" ;
+    skos:altLabel "Loonie" ;
+    skos:definition """Official currency of Canada"""@en ,
+        """Monnaie officielle du Canada"""@fr ;
+    skos:broader fame:Currency ;
+    dcterms:source "ECB Exchange Rates (XML)" ;
+    skos:exactMatch <http://dbpedia.org/resource/Canadian_dollar> .
+
+# ───────────────────────────────────────────────────────────────
+# COLLECTION: SECTEURS ÉCONOMIQUES
+# ───────────────────────────────────────────────────────────────
+
+fame:EconomicSectorsCollection a skos:Collection ;
+    skos:prefLabel "Economic Sectors"@en , "Secteurs Économiques"@fr ;
+    skos:member data:Technology , data:Financials , data:Healthcare ,
+                data:ConsumerDiscretionary , data:Communication ,
+                data:Industrials , data:Energy .
+
+data:Technology a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Information Technology"@en , "Technologies de l'Information"@fr ;
+    skos:altLabel "Tech" , "IT" , "Technology Sector" ;
+    skos:definition """Companies developing, producing, or distributing technology 
+        products and services"""@en ,
+        """Entreprises développant, produisant ou distribuant des produits 
+        et services technologiques"""@fr ;
+    skos:broader fame:Sector ;
+    skos:example "Apple, Microsoft, NVIDIA" ;
+    dcterms:source "CSV Financial Data" .
+
+data:Financials a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Financials"@en , "Services Financiers"@fr ;
+    skos:altLabel "Financial Services" , "Finance Sector" ;
+    skos:definition """Banks, investment firms, insurance companies, and real estate firms"""@en ,
+        """Banques, sociétés d'investissement, compagnies d'assurance et sociétés immobilières"""@fr ;
+    skos:broader fame:Sector ;
+    skos:example "JPMorgan Chase, Visa, Mastercard" ;
+    dcterms:source "CSV Financial Data" .
+
+data:Healthcare a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Health Care"@en , "Santé"@fr ;
+    skos:altLabel "Healthcare Sector" , "Medical Sector" ;
+    skos:definition """Pharmaceutical companies, medical device manufacturers, 
+        and healthcare providers"""@en ,
+        """Sociétés pharmaceutiques, fabricants de dispositifs médicaux 
+        et prestataires de soins de santé"""@fr ;
+    skos:broader fame:Sector ;
+    skos:example "Johnson & Johnson, Pfizer" ;
+    dcterms:source "CSV Financial Data" .
+
+data:ConsumerDiscretionary a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Consumer Discretionary"@en , "Consommation Discrétionnaire"@fr ;
+    skos:altLabel "Consumer Cyclical" ;
+    skos:definition """Non-essential goods and services including retail, 
+        entertainment, and automotive"""@en ,
+        """Biens et services non essentiels incluant commerce de détail, 
+        divertissement et automobile"""@fr ;
+    skos:broader fame:Sector ;
+    skos:example "Amazon, Tesla, Nike" ;
+    dcterms:source "CSV Financial Data" .
+
+data:Communication a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Communication Services"@en , "Services de Communication"@fr ;
+    skos:altLabel "Telecom" , "Media" ;
+    skos:definition """Telecommunications, media, and entertainment companies"""@en ,
+        """Sociétés de télécommunications, médias et divertissement"""@fr ;
+    skos:broader fame:Sector ;
+    skos:example "Alphabet (Google), Meta (Facebook)" ;
+    dcterms:source "CSV Financial Data" .
+
+data:Industrials a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Industrials"@en , "Industrie"@fr ;
+    skos:altLabel "Industrial Sector" , "Manufacturing" ;
+    skos:definition """Manufacturing, aerospace, defense, construction, and engineering"""@en ,
+        """Fabrication, aérospatiale, défense, construction et ingénierie"""@fr ;
+    skos:broader fame:Sector ;
+    skos:example "Boeing, Caterpillar, 3M" ;
+    dcterms:source "CSV Financial Data" .
+
+data:Energy a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Energy"@en , "Énergie"@fr ;
+    skos:altLabel "Energy Sector" , "Oil & Gas" ;
+    skos:definition """Oil, gas, and renewable energy companies"""@en ,
+        """Sociétés pétrolières, gazières et d'énergies renouvelables"""@fr ;
+    skos:broader fame:Sector ;
+    skos:example "ExxonMobil, Chevron" ;
+    dcterms:source "CSV Financial Data" .
+
+# ═══════════════════════════════════════════════════════════════
+# EXEMPLES D'INSTANCES: STOCKS
+# ═══════════════════════════════════════════════════════════════
+
+data:AAPL a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Apple Inc. (AAPL)"@en ;
+    skos:notation "AAPL" ;
+    skos:definition """Technology company specializing in consumer electronics, 
+        software, and online services"""@en ;
+    skos:broader fame:Stock ;
+    skos:related data:NASDAQ , data:USD , data:Technology , data:Apple_Inc ;
+    dcterms:source "Yahoo Finance API (JSON)" ;
+    fame:price "259.37"^^xsd:decimal ;
+    fame:marketCap "4000000000000"^^xsd:decimal .
+
+data:MSFT a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Microsoft Corporation (MSFT)"@en ;
+    skos:notation "MSFT" ;
+    skos:definition """Technology corporation producing software, hardware, 
+        and cloud services"""@en ;
+    skos:broader fame:Stock ;
+    skos:related data:NASDAQ , data:USD , data:Technology , data:Microsoft_Corp ;
+    dcterms:source "Yahoo Finance API (JSON)" ;
+    fame:price "425.22"^^xsd:decimal ;
+    fame:marketCap "3200000000000"^^xsd:decimal .
+
+data:GOOGL a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Alphabet Inc. (GOOGL)"@en ;
+    skos:notation "GOOGL" ;
+    skos:altLabel "Google" ;
+    skos:definition """Technology conglomerate specializing in Internet services, 
+        cloud computing, and AI"""@en ;
+    skos:broader fame:Stock ;
+    skos:related data:NASDAQ , data:USD , data:Communication , data:Alphabet_Inc ;
+    dcterms:source "Yahoo Finance API (JSON)" ;
+    fame:price "197.94"^^xsd:decimal ;
+    fame:marketCap "2450000000000"^^xsd:decimal .
+
+data:JPM a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "JPMorgan Chase & Co. (JPM)"@en ;
+    skos:notation "JPM" ;
+    skos:definition """American multinational investment bank and financial services company"""@en ;
+    skos:broader fame:Stock ;
+    skos:related data:NYSE , data:USD , data:Financials , data:JPMorgan_Chase ;
+    dcterms:source "Yahoo Finance API (JSON)" ;
+    fame:price "252.50"^^xsd:decimal ;
+    fame:marketCap "720000000000"^^xsd:decimal .
+
+# ═══════════════════════════════════════════════════════════════
+# EXEMPLES D'INSTANCES: COMPANIES
+# ═══════════════════════════════════════════════════════════════
+
+data:Apple_Inc a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Apple Inc."@en ;
+    skos:altLabel "Apple" ;
+    skos:definition """American multinational technology company headquartered 
+        in Cupertino, California"""@en ;
+    skos:broader fame:Company ;
+    skos:related data:Technology , data:AAPL ;
+    dcterms:spatial "Cupertino, California" ;
+    dcterms:source "S&P500/NYSE/NASDAQ CSV Files" .
+
+data:Microsoft_Corp a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Microsoft Corporation"@en ;
+    skos:altLabel "Microsoft" ;
+    skos:definition """American multinational technology corporation headquartered 
+        in Redmond, Washington"""@en ;
+    skos:broader fame:Company ;
+    skos:related data:Technology , data:MSFT ;
+    dcterms:spatial "Redmond, Washington" ;
+    dcterms:source "S&P500/NYSE/NASDAQ CSV Files" .
+
+data:Alphabet_Inc a skos:Concept ;
+    skos:inScheme fame:scheme ;
+    skos:prefLabel "Alphabet Inc."@en ;
+    skos:altLabel "Google Parent Company" ;
+    skos:definition """American multinational conglomerate headquartered 
+        in Mountain View, California"""@en ;
+    skos:broader fame:Company ;
+    skos:related data:Communication , data:GOOGL ;
+    dcterms:spatial "Mountain View, California" ;
+    dcterms:source "S&P500/NYSE/NASDAQ CSV Files" .
+
+# ═══════════════════════════════════════════════════════════════
+# MAPPING VERS RESSOURCES EXTERNES (Linked Data)
+# ═══════════════════════════════════════════════════════════════
+
+data:EUR skos:exactMatch <http://dbpedia.org/resource/Euro> ,
+                         <http://www.wikidata.org/entity/Q4916> .
+
+data:USD skos:exactMatch <http://dbpedia.org/resource/United_States_dollar> ,
+                         <http://www.wikidata.org/entity/Q4917> .
+
+data:AAPL skos:closeMatch <http://dbpedia.org/resource/Apple_Inc.> .
+
+data:MSFT skos:closeMatch <http://dbpedia.org/resource/Microsoft> .

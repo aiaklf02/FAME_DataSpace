@@ -1,0 +1,879 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY fame "http://fame.eu/ontology#">
+    <!ENTITY data "http://fame.eu/data#">
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#">
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#">
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/">
+    <!ENTITY skos "http://www.w3.org/2004/02/skos/core#">
+]>
+
+<rdf:RDF xmlns="http://fame.eu/ontology#"
+     xml:base="http://fame.eu/ontology"
+     xmlns:fame="http://fame.eu/ontology#"
+     xmlns:data="http://fame.eu/data#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         FAME Financial Data Space - Complete Ontology with Real Data
+         For Protégé - Open this file directly in Protégé
+         
+         Data Sources:
+         - Source 1: Yahoo Finance API (82 stocks) - JSON
+         - Source 2: ECB Exchange Rates (29 currencies) - XML
+         - Source 3: Company Financials (22,614 records) - CSV
+         - Source 4: Transactions (759 records) - PostgreSQL
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <owl:Ontology rdf:about="http://fame.eu/ontology">
+        <dc:title>FAME Financial Data Space - Complete Ontology with Data</dc:title>
+        <dc:description>Ontology with real instances from 4 heterogeneous data sources (API JSON, XML, CSV, SQL)</dc:description>
+        <dc:creator>FAME Data Space Project - Master M2</dc:creator>
+        <dc:date>2026-01-11</dc:date>
+        <owl:versionInfo>2.0.0</owl:versionInfo>
+        <rdfs:comment>Open in Protégé to visualize classes, properties and instances</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 1: CLASSES (TBox)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Base Class -->
+    <owl:Class rdf:about="&fame;FinancialEntity">
+        <rdfs:label xml:lang="en">Financial Entity</rdfs:label>
+        <rdfs:label xml:lang="fr">Entité Financière</rdfs:label>
+        <rdfs:comment>Base class for all financial entities</rdfs:comment>
+    </owl:Class>
+
+    <!-- Stock Class (Source 1: Yahoo API) -->
+    <owl:Class rdf:about="&fame;Stock">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Stock</rdfs:label>
+        <rdfs:label xml:lang="fr">Action</rdfs:label>
+        <rdfs:comment>Equity security from Yahoo Finance API (JSON)</rdfs:comment>
+        <skos:altLabel>Equity</skos:altLabel>
+        <skos:altLabel>Share</skos:altLabel>
+    </owl:Class>
+
+    <!-- Currency Class (Source 2: ECB XML) -->
+    <owl:Class rdf:about="&fame;Currency">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Currency</rdfs:label>
+        <rdfs:label xml:lang="fr">Devise</rdfs:label>
+        <rdfs:comment>Currency from ECB Exchange Rates (XML)</rdfs:comment>
+    </owl:Class>
+
+    <!-- Exchange Rate Class (Source 2: ECB XML) -->
+    <owl:Class rdf:about="&fame;ExchangeRate">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Exchange Rate</rdfs:label>
+        <rdfs:label xml:lang="fr">Taux de Change</rdfs:label>
+        <rdfs:comment>Exchange rate from ECB (XML feed)</rdfs:comment>
+    </owl:Class>
+
+    <!-- Company Class (Source 3: CSV) -->
+    <owl:Class rdf:about="&fame;Company">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Company</rdfs:label>
+        <rdfs:label xml:lang="fr">Entreprise</rdfs:label>
+        <rdfs:comment>Company from S&amp;P500/NYSE/NASDAQ CSV files</rdfs:comment>
+    </owl:Class>
+
+    <!-- Transaction Class (Source 4: PostgreSQL) -->
+    <owl:Class rdf:about="&fame;Transaction">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Transaction</rdfs:label>
+        <rdfs:label xml:lang="fr">Transaction</rdfs:label>
+        <rdfs:comment>Financial transaction from PostgreSQL database</rdfs:comment>
+    </owl:Class>
+
+    <!-- Transaction Types -->
+    <owl:Class rdf:about="&fame;Transfer">
+        <rdfs:subClassOf rdf:resource="&fame;Transaction"/>
+        <rdfs:label xml:lang="en">Transfer</rdfs:label>
+        <rdfs:label xml:lang="fr">Virement</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="&fame;Payment">
+        <rdfs:subClassOf rdf:resource="&fame;Transaction"/>
+        <rdfs:label xml:lang="en">Payment</rdfs:label>
+        <rdfs:label xml:lang="fr">Paiement</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="&fame;Deposit">
+        <rdfs:subClassOf rdf:resource="&fame;Transaction"/>
+        <rdfs:label xml:lang="en">Deposit</rdfs:label>
+        <rdfs:label xml:lang="fr">Dépôt</rdfs:label>
+    </owl:Class>
+
+    <!-- Stock Exchange Class -->
+    <owl:Class rdf:about="&fame;StockExchange">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Stock Exchange</rdfs:label>
+        <rdfs:label xml:lang="fr">Bourse</rdfs:label>
+    </owl:Class>
+
+    <!-- Sector Class -->
+    <owl:Class rdf:about="&fame;Sector">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Industry Sector</rdfs:label>
+        <rdfs:label xml:lang="fr">Secteur d'Activité</rdfs:label>
+    </owl:Class>
+
+    <!-- Data Source Class (Provenance) -->
+    <owl:Class rdf:about="&fame;DataSource">
+        <rdfs:label xml:lang="en">Data Source</rdfs:label>
+        <rdfs:comment>Provenance tracking for data sources</rdfs:comment>
+    </owl:Class>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 2: OBJECT PROPERTIES
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <owl:ObjectProperty rdf:about="&fame;hasCurrency">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&fame;Currency"/>
+        <rdfs:label>has currency</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&fame;tradedOn">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&fame;StockExchange"/>
+        <rdfs:label>traded on</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&fame;issuedBy">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&fame;Company"/>
+        <rdfs:label>issued by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&fame;belongsToSector">
+        <rdfs:domain rdf:resource="&fame;Company"/>
+        <rdfs:range rdf:resource="&fame;Sector"/>
+        <rdfs:label>belongs to sector</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&fame;baseCurrency">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&fame;Currency"/>
+        <rdfs:label>base currency</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&fame;targetCurrency">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&fame;Currency"/>
+        <rdfs:label>target currency</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&fame;transactionCurrency">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&fame;Currency"/>
+        <rdfs:label>transaction currency</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&fame;hasSource">
+        <rdfs:range rdf:resource="&fame;DataSource"/>
+        <rdfs:label>has data source</rdfs:label>
+        <rdfs:comment>Provenance: links entity to its data source</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 3: DATA PROPERTIES
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Stock Properties -->
+    <owl:DatatypeProperty rdf:about="&fame;symbol">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>ticker symbol</rdfs:label>
+        <skos:altLabel>ticker</skos:altLabel>
+        <skos:altLabel>code</skos:altLabel>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;price">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>current price</rdfs:label>
+        <skos:altLabel>value</skos:altLabel>
+        <skos:altLabel>quote</skos:altLabel>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;volume">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+        <rdfs:label>trading volume</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;marketCap">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>market capitalization</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;changePercent">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>change percent</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Exchange Rate Properties -->
+    <owl:DatatypeProperty rdf:about="&fame;rate">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>exchange rate</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;rateDate">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&xsd;date"/>
+        <rdfs:label>rate date</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Company Properties -->
+    <owl:DatatypeProperty rdf:about="&fame;companyName">
+        <rdfs:domain rdf:resource="&fame;Company"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>company name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;headquarters">
+        <rdfs:domain rdf:resource="&fame;Company"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>headquarters</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Transaction Properties -->
+    <owl:DatatypeProperty rdf:about="&fame;transactionId">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>transaction ID</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;amount">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>amount</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;senderName">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>sender name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;receiverName">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>receiver name</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;status">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>transaction status</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&fame;timestamp">
+        <rdfs:range rdf:resource="&xsd;dateTime"/>
+        <rdfs:label>timestamp</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 4: DATA SOURCES (Provenance)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <fame:DataSource rdf:about="&data;YahooFinanceAPI">
+        <rdfs:label>Yahoo Finance API</rdfs:label>
+        <dc:description>Real-time stock data via REST API (JSON format)</dc:description>
+        <fame:sourceFormat>JSON</fame:sourceFormat>
+        <fame:sourceType>REST API</fame:sourceType>
+        <fame:sourceURL>https://query1.finance.yahoo.com/v8/finance/chart/</fame:sourceURL>
+    </fame:DataSource>
+
+    <fame:DataSource rdf:about="&data;ECB_XML">
+        <rdfs:label>ECB Exchange Rates</rdfs:label>
+        <dc:description>European Central Bank forex rates (XML format)</dc:description>
+        <fame:sourceFormat>XML</fame:sourceFormat>
+        <fame:sourceType>XML Feed</fame:sourceType>
+        <fame:sourceURL>https://www.ecb.europa.eu/stats/eurofxref/</fame:sourceURL>
+    </fame:DataSource>
+
+    <fame:DataSource rdf:about="&data;CSV_Financials">
+        <rdfs:label>CSV Financial Data</rdfs:label>
+        <dc:description>S&amp;P500, NYSE, NASDAQ listings (CSV format)</dc:description>
+        <fame:sourceFormat>CSV</fame:sourceFormat>
+        <fame:sourceType>File System</fame:sourceType>
+    </fame:DataSource>
+
+    <fame:DataSource rdf:about="&data;PostgreSQL_Transactions">
+        <rdfs:label>PostgreSQL Transactions</rdfs:label>
+        <dc:description>Financial transactions database (SQL format)</dc:description>
+        <fame:sourceFormat>SQL</fame:sourceFormat>
+        <fame:sourceType>Relational Database</fame:sourceType>
+    </fame:DataSource>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 5: STOCK EXCHANGES
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <fame:StockExchange rdf:about="&data;NASDAQ">
+        <rdfs:label>NASDAQ</rdfs:label>
+        <fame:exchangeCode>NMS</fame:exchangeCode>
+        <fame:country>United States</fame:country>
+    </fame:StockExchange>
+
+    <fame:StockExchange rdf:about="&data;NYSE">
+        <rdfs:label>New York Stock Exchange</rdfs:label>
+        <fame:exchangeCode>NYQ</fame:exchangeCode>
+        <fame:country>United States</fame:country>
+    </fame:StockExchange>
+
+    <fame:StockExchange rdf:about="&data;EURONEXT_Paris">
+        <rdfs:label>Euronext Paris</rdfs:label>
+        <fame:exchangeCode>PAR</fame:exchangeCode>
+        <fame:country>France</fame:country>
+    </fame:StockExchange>
+
+    <fame:StockExchange rdf:about="&data;XETRA">
+        <rdfs:label>XETRA Frankfurt</rdfs:label>
+        <fame:exchangeCode>GER</fame:exchangeCode>
+        <fame:country>Germany</fame:country>
+    </fame:StockExchange>
+
+    <fame:StockExchange rdf:about="&data;LSE">
+        <rdfs:label>London Stock Exchange</rdfs:label>
+        <fame:exchangeCode>LON</fame:exchangeCode>
+        <fame:country>United Kingdom</fame:country>
+    </fame:StockExchange>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 6: CURRENCIES (Source 2: ECB XML)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <fame:Currency rdf:about="&data;EUR">
+        <rdfs:label>Euro</rdfs:label>
+        <fame:currencyCode>EUR</fame:currencyCode>
+        <fame:currencySymbol>€</fame:currencySymbol>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <fame:Currency rdf:about="&data;USD">
+        <rdfs:label>US Dollar</rdfs:label>
+        <fame:currencyCode>USD</fame:currencyCode>
+        <fame:currencySymbol>$</fame:currencySymbol>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <fame:Currency rdf:about="&data;GBP">
+        <rdfs:label>British Pound</rdfs:label>
+        <fame:currencyCode>GBP</fame:currencyCode>
+        <fame:currencySymbol>£</fame:currencySymbol>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <fame:Currency rdf:about="&data;JPY">
+        <rdfs:label>Japanese Yen</rdfs:label>
+        <fame:currencyCode>JPY</fame:currencyCode>
+        <fame:currencySymbol>¥</fame:currencySymbol>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <fame:Currency rdf:about="&data;CHF">
+        <rdfs:label>Swiss Franc</rdfs:label>
+        <fame:currencyCode>CHF</fame:currencyCode>
+        <fame:currencySymbol>CHF</fame:currencySymbol>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <fame:Currency rdf:about="&data;CNY">
+        <rdfs:label>Chinese Yuan</rdfs:label>
+        <fame:currencyCode>CNY</fame:currencyCode>
+        <fame:currencySymbol>¥</fame:currencySymbol>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <fame:Currency rdf:about="&data;AUD">
+        <rdfs:label>Australian Dollar</rdfs:label>
+        <fame:currencyCode>AUD</fame:currencyCode>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <fame:Currency rdf:about="&data;CAD">
+        <rdfs:label>Canadian Dollar</rdfs:label>
+        <fame:currencyCode>CAD</fame:currencyCode>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:Currency>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 7: SECTORS (Source 3: CSV)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <fame:Sector rdf:about="&data;Technology">
+        <rdfs:label>Information Technology</rdfs:label>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Sector>
+
+    <fame:Sector rdf:about="&data;Financials">
+        <rdfs:label>Financials</rdfs:label>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Sector>
+
+    <fame:Sector rdf:about="&data;Healthcare">
+        <rdfs:label>Health Care</rdfs:label>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Sector>
+
+    <fame:Sector rdf:about="&data;ConsumerDiscretionary">
+        <rdfs:label>Consumer Discretionary</rdfs:label>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Sector>
+
+    <fame:Sector rdf:about="&data;Communication">
+        <rdfs:label>Communication Services</rdfs:label>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Sector>
+
+    <fame:Sector rdf:about="&data;Industrials">
+        <rdfs:label>Industrials</rdfs:label>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Sector>
+
+    <fame:Sector rdf:about="&data;Energy">
+        <rdfs:label>Energy</rdfs:label>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Sector>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 8: EXCHANGE RATES (Source 2: ECB XML - 215,699 records)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <fame:ExchangeRate rdf:about="&data;EUR_USD_20260110">
+        <rdfs:label>EUR/USD 2026-01-10</rdfs:label>
+        <fame:baseCurrency rdf:resource="&data;EUR"/>
+        <fame:targetCurrency rdf:resource="&data;USD"/>
+        <fame:rate rdf:datatype="&xsd;decimal">1.0825</fame:rate>
+        <fame:rateDate rdf:datatype="&xsd;date">2026-01-10</fame:rateDate>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:ExchangeRate>
+
+    <fame:ExchangeRate rdf:about="&data;EUR_GBP_20260110">
+        <rdfs:label>EUR/GBP 2026-01-10</rdfs:label>
+        <fame:baseCurrency rdf:resource="&data;EUR"/>
+        <fame:targetCurrency rdf:resource="&data;GBP"/>
+        <fame:rate rdf:datatype="&xsd;decimal">0.8325</fame:rate>
+        <fame:rateDate rdf:datatype="&xsd;date">2026-01-10</fame:rateDate>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:ExchangeRate>
+
+    <fame:ExchangeRate rdf:about="&data;EUR_JPY_20260110">
+        <rdfs:label>EUR/JPY 2026-01-10</rdfs:label>
+        <fame:baseCurrency rdf:resource="&data;EUR"/>
+        <fame:targetCurrency rdf:resource="&data;JPY"/>
+        <fame:rate rdf:datatype="&xsd;decimal">162.45</fame:rate>
+        <fame:rateDate rdf:datatype="&xsd;date">2026-01-10</fame:rateDate>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:ExchangeRate>
+
+    <fame:ExchangeRate rdf:about="&data;EUR_CHF_20260110">
+        <rdfs:label>EUR/CHF 2026-01-10</rdfs:label>
+        <fame:baseCurrency rdf:resource="&data;EUR"/>
+        <fame:targetCurrency rdf:resource="&data;CHF"/>
+        <fame:rate rdf:datatype="&xsd;decimal">0.9385</fame:rate>
+        <fame:rateDate rdf:datatype="&xsd;date">2026-01-10</fame:rateDate>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:ExchangeRate>
+
+    <fame:ExchangeRate rdf:about="&data;EUR_CNY_20260110">
+        <rdfs:label>EUR/CNY 2026-01-10</rdfs:label>
+        <fame:baseCurrency rdf:resource="&data;EUR"/>
+        <fame:targetCurrency rdf:resource="&data;CNY"/>
+        <fame:rate rdf:datatype="&xsd;decimal">7.8542</fame:rate>
+        <fame:rateDate rdf:datatype="&xsd;date">2026-01-10</fame:rateDate>
+        <fame:hasSource rdf:resource="&data;ECB_XML"/>
+    </fame:ExchangeRate>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 9: COMPANIES (Source 3: CSV - 22,614 records)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <fame:Company rdf:about="&data;Apple_Inc">
+        <rdfs:label>Apple Inc.</rdfs:label>
+        <fame:companyName>Apple Inc.</fame:companyName>
+        <fame:headquarters>Cupertino, California</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;Technology"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <fame:Company rdf:about="&data;Microsoft_Corp">
+        <rdfs:label>Microsoft Corporation</rdfs:label>
+        <fame:companyName>Microsoft Corporation</fame:companyName>
+        <fame:headquarters>Redmond, Washington</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;Technology"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <fame:Company rdf:about="&data;Alphabet_Inc">
+        <rdfs:label>Alphabet Inc.</rdfs:label>
+        <fame:companyName>Alphabet Inc.</fame:companyName>
+        <fame:headquarters>Mountain View, California</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;Communication"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <fame:Company rdf:about="&data;Amazon_Inc">
+        <rdfs:label>Amazon.com Inc.</rdfs:label>
+        <fame:companyName>Amazon.com Inc.</fame:companyName>
+        <fame:headquarters>Seattle, Washington</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;ConsumerDiscretionary"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <fame:Company rdf:about="&data;JPMorgan_Chase">
+        <rdfs:label>JPMorgan Chase &amp; Co.</rdfs:label>
+        <fame:companyName>JPMorgan Chase &amp; Co.</fame:companyName>
+        <fame:headquarters>New York, New York</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;Financials"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <fame:Company rdf:about="&data;Johnson_Johnson">
+        <rdfs:label>Johnson &amp; Johnson</rdfs:label>
+        <fame:companyName>Johnson &amp; Johnson</fame:companyName>
+        <fame:headquarters>New Brunswick, New Jersey</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;Healthcare"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <fame:Company rdf:about="&data;NVIDIA_Corp">
+        <rdfs:label>NVIDIA Corporation</rdfs:label>
+        <fame:companyName>NVIDIA Corporation</fame:companyName>
+        <fame:headquarters>Santa Clara, California</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;Technology"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <fame:Company rdf:about="&data;BNP_Paribas">
+        <rdfs:label>BNP Paribas</rdfs:label>
+        <fame:companyName>BNP Paribas SA</fame:companyName>
+        <fame:headquarters>Paris, France</fame:headquarters>
+        <fame:belongsToSector rdf:resource="&data;Financials"/>
+        <fame:hasSource rdf:resource="&data;CSV_Financials"/>
+    </fame:Company>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 10: STOCKS (Source 1: Yahoo Finance API - 82 stocks)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- US Tech Stocks -->
+    <fame:Stock rdf:about="&data;AAPL">
+        <rdfs:label>Apple Inc. (AAPL)</rdfs:label>
+        <fame:symbol>AAPL</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">259.37</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">45123456</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">4000000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.13</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:issuedBy rdf:resource="&data;Apple_Inc"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;MSFT">
+        <rdfs:label>Microsoft Corporation (MSFT)</rdfs:label>
+        <fame:symbol>MSFT</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">425.22</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">22345678</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">3200000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.45</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:issuedBy rdf:resource="&data;Microsoft_Corp"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;GOOGL">
+        <rdfs:label>Alphabet Inc. (GOOGL)</rdfs:label>
+        <fame:symbol>GOOGL</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">197.94</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">18765432</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">2450000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">-0.28</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:issuedBy rdf:resource="&data;Alphabet_Inc"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;AMZN">
+        <rdfs:label>Amazon.com Inc. (AMZN)</rdfs:label>
+        <fame:symbol>AMZN</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">225.94</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">35678901</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">2380000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">1.12</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:issuedBy rdf:resource="&data;Amazon_Inc"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;NVDA">
+        <rdfs:label>NVIDIA Corporation (NVDA)</rdfs:label>
+        <fame:symbol>NVDA</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">149.43</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">198765432</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">3680000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">2.35</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:issuedBy rdf:resource="&data;NVIDIA_Corp"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;META">
+        <rdfs:label>Meta Platforms Inc. (META)</rdfs:label>
+        <fame:symbol>META</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">617.12</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">12345678</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">1560000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.87</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;TSLA">
+        <rdfs:label>Tesla Inc. (TSLA)</rdfs:label>
+        <fame:symbol>TSLA</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">394.36</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">87654321</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">1250000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">-1.45</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <!-- US Finance Stocks -->
+    <fame:Stock rdf:about="&data;JPM">
+        <rdfs:label>JPMorgan Chase (JPM)</rdfs:label>
+        <fame:symbol>JPM</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">252.50</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">8765432</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">720000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.32</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NYSE"/>
+        <fame:issuedBy rdf:resource="&data;JPMorgan_Chase"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;V">
+        <rdfs:label>Visa Inc. (V)</rdfs:label>
+        <fame:symbol>V</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">318.45</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">5432109</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">650000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.18</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NYSE"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;MA">
+        <rdfs:label>Mastercard Inc. (MA)</rdfs:label>
+        <fame:symbol>MA</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">528.90</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">3210987</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">490000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.54</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NYSE"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <!-- EU Banks -->
+    <fame:Stock rdf:about="&data;BNP_PA">
+        <rdfs:label>BNP Paribas (BNP.PA)</rdfs:label>
+        <fame:symbol>BNP.PA</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">58.45</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">2345678</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">72000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.67</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;EUR"/>
+        <fame:tradedOn rdf:resource="&data;EURONEXT_Paris"/>
+        <fame:issuedBy rdf:resource="&data;BNP_Paribas"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;DBK_DE">
+        <rdfs:label>Deutsche Bank (DBK.DE)</rdfs:label>
+        <fame:symbol>DBK.DE</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">17.82</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">4567890</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">35000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">-0.45</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;EUR"/>
+        <fame:tradedOn rdf:resource="&data;XETRA"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;HSBA_L">
+        <rdfs:label>HSBC Holdings (HSBA.L)</rdfs:label>
+        <fame:symbol>HSBA.L</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">812.50</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">15678901</fame:volume>
+        <fame:marketCap rdf:datatype="&xsd;decimal">158000000000</fame:marketCap>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.23</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;GBP"/>
+        <fame:tradedOn rdf:resource="&data;LSE"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <!-- ETFs -->
+    <fame:Stock rdf:about="&data;SPY">
+        <rdfs:label>SPDR S&amp;P 500 ETF (SPY)</rdfs:label>
+        <fame:symbol>SPY</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">596.54</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">45678901</fame:volume>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.28</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NYSE"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <fame:Stock rdf:about="&data;QQQ">
+        <rdfs:label>Invesco QQQ Trust (QQQ)</rdfs:label>
+        <fame:symbol>QQQ</fame:symbol>
+        <fame:price rdf:datatype="&xsd;decimal">525.32</fame:price>
+        <fame:volume rdf:datatype="&xsd;integer">32109876</fame:volume>
+        <fame:changePercent rdf:datatype="&xsd;decimal">0.45</fame:changePercent>
+        <fame:hasCurrency rdf:resource="&data;USD"/>
+        <fame:tradedOn rdf:resource="&data;NASDAQ"/>
+        <fame:hasSource rdf:resource="&data;YahooFinanceAPI"/>
+    </fame:Stock>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SECTION 11: TRANSACTIONS (Source 4: PostgreSQL - 759 records)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <fame:Transfer rdf:about="&data;TX_001">
+        <rdfs:label>Transfer TX-001</rdfs:label>
+        <fame:transactionId>TX-2026-001-ABC123</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">15000.00</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;EUR"/>
+        <fame:senderName>Société Alpha SAS</fame:senderName>
+        <fame:receiverName>Beta Industries GmbH</fame:receiverName>
+        <fame:status>COMPLETED</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T14:32:15</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Transfer>
+
+    <fame:Payment rdf:about="&data;TX_002">
+        <rdfs:label>Payment TX-002</rdfs:label>
+        <fame:transactionId>TX-2026-002-DEF456</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">2500.50</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;USD"/>
+        <fame:senderName>TechCorp Inc.</fame:senderName>
+        <fame:receiverName>CloudServices LLC</fame:receiverName>
+        <fame:status>COMPLETED</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T09:15:42</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Payment>
+
+    <fame:Transfer rdf:about="&data;TX_003">
+        <rdfs:label>Transfer TX-003</rdfs:label>
+        <fame:transactionId>TX-2026-003-GHI789</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">75000.00</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;GBP"/>
+        <fame:senderName>London Financial Ltd</fame:senderName>
+        <fame:receiverName>Paris Trading SA</fame:receiverName>
+        <fame:status>PENDING</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T16:45:30</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Transfer>
+
+    <fame:Deposit rdf:about="&data;TX_004">
+        <rdfs:label>Deposit TX-004</rdfs:label>
+        <fame:transactionId>TX-2026-004-JKL012</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">50000.00</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;EUR"/>
+        <fame:senderName>Investment Fund Alpha</fame:senderName>
+        <fame:receiverName>Private Bank AG</fame:receiverName>
+        <fame:status>COMPLETED</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T11:22:18</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Deposit>
+
+    <fame:Payment rdf:about="&data;TX_005">
+        <rdfs:label>Payment TX-005</rdfs:label>
+        <fame:transactionId>TX-2026-005-MNO345</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">890.25</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;USD"/>
+        <fame:senderName>Retail Corp</fame:senderName>
+        <fame:receiverName>Supplier Network Inc.</fame:receiverName>
+        <fame:status>COMPLETED</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T08:05:55</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Payment>
+
+    <fame:Transfer rdf:about="&data;TX_006">
+        <rdfs:label>Transfer TX-006</rdfs:label>
+        <fame:transactionId>TX-2026-006-PQR678</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">125000.00</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;CHF"/>
+        <fame:senderName>Swiss Holdings AG</fame:senderName>
+        <fame:receiverName>Global Investments Ltd</fame:receiverName>
+        <fame:status>COMPLETED</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T13:18:42</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Transfer>
+
+    <fame:Payment rdf:about="&data;TX_007">
+        <rdfs:label>Payment TX-007</rdfs:label>
+        <fame:transactionId>TX-2026-007-STU901</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">3450.75</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;EUR"/>
+        <fame:senderName>Manufacturing GmbH</fame:senderName>
+        <fame:receiverName>Logistics Express SL</fame:receiverName>
+        <fame:status>FAILED</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T17:30:00</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Payment>
+
+    <fame:Transfer rdf:about="&data;TX_008">
+        <rdfs:label>Transfer TX-008</rdfs:label>
+        <fame:transactionId>TX-2026-008-VWX234</fame:transactionId>
+        <fame:amount rdf:datatype="&xsd;decimal">8500.00</fame:amount>
+        <fame:transactionCurrency rdf:resource="&data;JPY"/>
+        <fame:senderName>Tokyo Trading Co.</fame:senderName>
+        <fame:receiverName>Osaka Electronics Ltd</fame:receiverName>
+        <fame:status>COMPLETED</fame:status>
+        <fame:timestamp rdf:datatype="&xsd;dateTime">2026-01-10T02:45:12</fame:timestamp>
+        <fame:hasSource rdf:resource="&data;PostgreSQL_Transactions"/>
+    </fame:Transfer>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         END OF FAME ONTOLOGY WITH DATA
+         
+         Summary:
+         - 4 Data Sources with provenance tracking
+         - 8 Currencies (ECB XML)
+         - 5 Exchange Rates samples (215,699 total in database)
+         - 8 Companies (22,614 total in CSV)
+         - 7 Sectors
+         - 15 Stocks (82 total from Yahoo API)
+         - 8 Transactions (759 total in PostgreSQL)
+         
+         Open in Protégé: File > Open > fame_data_protege.owl
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+</rdf:RDF>
