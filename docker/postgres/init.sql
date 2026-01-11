@@ -174,10 +174,90 @@ GROUP BY DATE(created_at), transaction_type, sender_country;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO fame_user;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO fame_user;
 
+-- =============================================================================
+-- FAME STREAMING SCHEMA - For Real-Time Grafana Dashboards
+-- =============================================================================
+
+CREATE SCHEMA IF NOT EXISTS fame_streaming;
+
+-- Stock quotes from Kafka streaming
+CREATE TABLE IF NOT EXISTS fame_streaming.stock_quotes (
+    id SERIAL PRIMARY KEY,
+    symbol VARCHAR(20) NOT NULL,
+    price DECIMAL(18, 4) NOT NULL,
+    previous_close DECIMAL(18, 4),
+    change_amount DECIMAL(18, 4),
+    change_percent DECIMAL(8, 4),
+    volume BIGINT,
+    currency VARCHAR(10) DEFAULT 'USD',
+    exchange VARCHAR(50),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    source VARCHAR(50) DEFAULT 'yahoo_finance'
+);
+
+-- Create hypertable-like index for time-series queries
+CREATE INDEX IF NOT EXISTS idx_stock_quotes_symbol_time 
+    ON fame_streaming.stock_quotes(symbol, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_stock_quotes_timestamp 
+    ON fame_streaming.stock_quotes(timestamp DESC);
+
+-- Alerts from anomaly detection
+CREATE TABLE IF NOT EXISTS fame_streaming.alerts (
+    id SERIAL PRIMARY KEY,
+    alert_type VARCHAR(50) NOT NULL,
+    symbol VARCHAR(50),
+    message TEXT,
+    severity VARCHAR(20) DEFAULT 'MEDIUM',
+    value DECIMAL(18, 4),
+    threshold DECIMAL(18, 4),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_alerts_timestamp 
+    ON fame_streaming.alerts(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_alerts_severity 
+    ON fame_streaming.alerts(severity);
+
+-- Forex rates from ECB streaming  
+CREATE TABLE IF NOT EXISTS fame_streaming.forex_rates (
+    id SERIAL PRIMARY KEY,
+    base_currency VARCHAR(10) DEFAULT 'EUR',
+    target_currency VARCHAR(10) NOT NULL,
+    rate DECIMAL(18, 6) NOT NULL,
+    inverse_rate DECIMAL(18, 6),
+    reference_date DATE,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    source VARCHAR(50) DEFAULT 'ecb_xml'
+);
+
+CREATE INDEX IF NOT EXISTS idx_forex_rates_currencies 
+    ON fame_streaming.forex_rates(base_currency, target_currency, timestamp DESC);
+
+-- Transaction metrics aggregation
+CREATE TABLE IF NOT EXISTS fame_streaming.transaction_metrics (
+    id SERIAL PRIMARY KEY,
+    metric_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_count INTEGER DEFAULT 0,
+    total_amount DECIMAL(18, 2) DEFAULT 0,
+    avg_amount DECIMAL(18, 2) DEFAULT 0,
+    completed_count INTEGER DEFAULT 0,
+    pending_count INTEGER DEFAULT 0,
+    failed_count INTEGER DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_transaction_metrics_time 
+    ON fame_streaming.transaction_metrics(metric_time DESC);
+
+-- Grant permissions on streaming schema
+GRANT ALL PRIVILEGES ON SCHEMA fame_streaming TO fame_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA fame_streaming TO fame_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA fame_streaming TO fame_user;
+
 -- Display success message
 DO $$
 BEGIN
     RAISE NOTICE '✅ FAME Database initialized successfully!';
     RAISE NOTICE '   Tables: transactions, customers, banks, exchange_rates, audit_log';
     RAISE NOTICE '   Views: v_cross_border_transactions, v_transaction_stats';
+    RAISE NOTICE '   Streaming: fame_streaming.stock_quotes, fame_streaming.alerts, fame_streaming.forex_rates';
 END $$;

@@ -54,6 +54,10 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from concurrent.futures import ThreadPoolExecutor
 import random
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import StructType, StringType, FloatType
+import requests
 
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -594,6 +598,43 @@ class KafkaFinanceConsumer:
             if self.pg_conn:
                 self.pg_conn.close()
 
+
+def push_to_prometheus(symbol, price, volume):
+    data = f"stock_price{{symbol=\"{symbol}\"}} {price}\n"
+    data += f"stock_volume{{symbol=\"{symbol}\"}} {volume}\n"
+    response = requests.post(PROMETHEUS_PUSHGATEWAY, data=data, headers={"Content-Type": "text/plain"})
+    if response.status_code == 200:
+        print(f"Pushed metrics for {symbol} to Prometheus")
+    else:
+        print(f"Failed to push metrics for {symbol}: {response.status_code}")
+
+def process_stream():
+    spark = SparkSession.builder \
+        .appName("KafkaStockStreaming") \
+        .getOrCreate()
+
+    df = spark.readStream \
+        .format("kafka") \
+        .option("kafka.bootstrap.servers", KAFKA_BROKER) \
+        .option("subscribe", KAFKA_TOPIC) \
+        .load()
+
+    stock_data = df.selectExpr("CAST(value AS STRING)") \
+        .select(from_json(col("value"), schema).alias("data")) \
+        .select("data.*")
+
+    def foreach_batch_function(batch_df, batch_id):
+        for row in batch_df.collect():
+            push_to_prometheus(row.symbol, row.price, row.volume)
+
+    query = stock_data.writeStream \
+        .foreachBatch(foreach_batch_function) \
+        .start()
+
+    query.awaitTermination()
+
+if __name__ == "__main__":
+    process_stream()
 
 def main():
     parser = argparse.ArgumentParser(description='FAME Kafka Financial Streaming')

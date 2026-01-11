@@ -155,13 +155,12 @@ services:
     environment:
       ADMIN_PASSWORD: admin123
       JVM_ARGS: -Xmx2g
-      TDB2: "true"
+      FUSEKI_DATASET_1: fame
     ports:
       - "3030:3030"
     volumes:
       - fuseki-data:/fuseki
-      - ./docker/fuseki/config.ttl:/fuseki/configuration/fame.ttl
-      # Mount Protégé semantic files for auto-loading
+      # Mount Protege semantic files for auto-loading
       - ./semantic/fame_data_protege.owl:/fuseki/data/ontology/fame_data_protege.owl:ro
       - ./semantic/FAME-RDF.rdf:/fuseki/data/rdf/FAME-RDF.rdf:ro
       - ./semantic/FAME-SKOS.ttl:/fuseki/data/vocabulary/FAME-SKOS.ttl:ro
@@ -222,6 +221,45 @@ services:
       - '--storage.tsdb.path=/prometheus'
     networks:
       - fame-network
+
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: fame-pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 📊 METRICS EXPORTERS - For Prometheus Scraping
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: fame-postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://fame_user:fame_password@postgres:5432/fame_transactions?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - fame-network
+    restart: unless-stopped
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: fame-redis-exporter
+    environment:
+      REDIS_ADDR: "redis:6379"
+    ports:
+      - "9121:9121"
+    depends_on:
+      - redis
+    networks:
+      - fame-network
+    restart: unless-stopped
 
 # ════════════════════════════════════════════════════════════════════════════
 # 🔧 NETWORKS & VOLUMES

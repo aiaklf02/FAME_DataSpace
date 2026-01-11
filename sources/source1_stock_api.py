@@ -67,6 +67,7 @@ class StockMarketAPIConnector:
     """
     
     ALPHA_VANTAGE_BASE_URL = "https://www.alphavantage.co/query"
+    YAHOO_FINANCE_BASE_URL = "https://query1.finance.yahoo.com/v7/finance/quote"
     
     # Kafka topics for this source
     KAFKA_TOPIC_QUOTES = "fame.stocks.quotes"
@@ -278,6 +279,61 @@ class StockMarketAPIConnector:
         if self.producer:
             self.producer.flush()
             self.producer.close()
+    
+    def continuous_polling_yahoo(self, symbols: List[str], interval_seconds: int = 30):
+        """
+        Continuously poll Yahoo Finance API and stream data to Kafka.
+        
+        Args:
+            symbols: List of stock symbols to poll
+            interval_seconds: Seconds between polls
+        """
+        logger.info(f"🚀 Starting continuous polling for {len(symbols)} symbols")
+        logger.info(f"   Interval: {interval_seconds}s")
+        
+        while True:
+            for symbol in symbols:
+                try:
+                    params = {"symbols": symbol}
+                    response = self.session.get(self.YAHOO_FINANCE_BASE_URL, params=params, timeout=10)
+                    response.raise_for_status()
+                    data = response.json()
+                    
+                    if "quoteResponse" in data and data["quoteResponse"]["result"]:
+                        quote_data = data["quoteResponse"]["result"][0]
+                        quote = self._parse_yahoo_quote(symbol, quote_data)
+                        self._publish_to_kafka(self.KAFKA_TOPIC_QUOTES, symbol, asdict(quote))
+                        logger.info(f"📈 {symbol}: ${quote.current_price} (Yahoo)")
+                    else:
+                        logger.warning(f"No data found for {symbol} in Yahoo response")
+                except Exception as e:
+                    logger.error(f"Error fetching data from Yahoo for {symbol}: {e}")
+            
+            time.sleep(interval_seconds)
+    
+    def _parse_yahoo_quote(self, symbol: str, data: Dict) -> StockQuote:
+        """Parse Yahoo Finance API response into StockQuote."""
+        metadata = self.COMPANY_METADATA.get(symbol, {
+            "name": symbol, "exchange": "Unknown", "sector": "Unknown", "currency": "USD"
+        })
+        
+        return StockQuote(
+            source="yahoo_finance",
+            source_type="REST_API",
+            timestamp=datetime.now().isoformat(),
+            symbol=symbol,
+            company_name=metadata["name"],
+            exchange=metadata["exchange"],
+            currency=metadata["currency"],
+            open_price=float(data.get("open", 0)),
+            high_price=float(data.get("dayHigh", 0)),
+            low_price=float(data.get("dayLow", 0)),
+            current_price=float(data.get("lastPrice", 0)),
+            previous_close=float(data.get("regularMarketPreviousClose", 0)),
+            change=float(data.get("priceChange", 0)),
+            change_percent=float(data.get("percentChange", "0%").replace("%", "")),
+            volume=int(data.get("volume", 0))
+        )
 
 
 # Test the connector
@@ -299,6 +355,9 @@ if __name__ == "__main__":
     import os
     os.makedirs("data/raw/api", exist_ok=True)
     connector.save_to_datalake(df, "data/raw/api/stock_quotes.json")
+    
+    # Start continuous polling (commented out to prevent infinite run)
+    # connector.continuous_polling_yahoo(symbols, interval_seconds=30)
     
     connector.close()
     print("\n✅ Source 1 test complete!")

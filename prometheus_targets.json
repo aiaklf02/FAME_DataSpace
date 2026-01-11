@@ -1,0 +1,29 @@
+﻿
+
+StatusCode        : 200
+StatusDescription : OK
+Content           : {"status":"success","data":{"activeTargets":[{
+                    "discoveredLabels":{"__address__":"fame-elt:80
+                    00","__metrics_path__":"/metrics","__scheme__"
+                    :"http","__scrape_interval__":"5s","__scrape_t
+                    imeout__":"5s","...
+RawContent        : HTTP/1.1 200 OK
+                    Vary: Origin
+                    Transfer-Encoding: chunked
+                    Content-Type: application/json
+                    Date: Sun, 11 Jan 2026 20:58:28 GMT
+                    
+                    {"status":"success","data":{"activeTargets":[{
+                    "discoveredLabels":{"__a...
+Forms             : {}
+Headers           : {[Vary, Origin], [Transfer-Encoding, 
+                    chunked], [Content-Type, application/json], 
+                    [Date, Sun, 11 Jan 2026 20:58:28 GMT]}
+Images            : {}
+InputFields       : {}
+Links             : {}
+ParsedHtml        : mshtml.HTMLDocumentClass
+RawContentLength  : 5287
+
+
+

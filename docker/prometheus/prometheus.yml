@@ -1,5 +1,5 @@
 # FAME Financial Data Space - Prometheus Configuration
-# Scraping metrics from all services
+# Scraping metrics from all available services
 
 global:
   scrape_interval: 15s
@@ -15,58 +15,56 @@ alerting:
 rule_files: []
 
 scrape_configs:
-  # Prometheus self-monitoring
+  # ═══════════════════════════════════════════════════════════════
+  # PROMETHEUS - Self-monitoring
+  # ═══════════════════════════════════════════════════════════════
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
         labels:
           service: 'prometheus'
+          zone: 'monitoring'
 
-  # MinIO Data Lake metrics
-  - job_name: 'minio'
-    metrics_path: /minio/v2/metrics/cluster
+  # ═══════════════════════════════════════════════════════════════
+  # PUSHGATEWAY - Receives metrics pushed from streaming application
+  # This is the main source for real-time streaming metrics
+  # ═══════════════════════════════════════════════════════════════
+  - job_name: 'pushgateway'
+    honor_labels: true
+    scrape_interval: 5s
     static_configs:
-      - targets: ['minio:9000']
+      - targets: ['pushgateway:9091']
         labels:
-          service: 'datalake'
-          zone: 'storage'
-
-  # Kafka metrics (JMX)
-  - job_name: 'kafka'
-    static_configs:
-      - targets: ['kafka:9999']
-        labels:
-          service: 'kafka'
+          service: 'pushgateway'
           zone: 'streaming'
 
-  # PostgreSQL metrics
+  # ═══════════════════════════════════════════════════════════════
+  # POSTGRESQL EXPORTER - Database metrics
+  # ═══════════════════════════════════════════════════════════════
   - job_name: 'postgres'
     static_configs:
-      - targets: ['postgres:5432']
+      - targets: ['postgres-exporter:9187']
         labels:
           service: 'postgres'
           zone: 'database'
 
-  # Redis metrics
+  # ═══════════════════════════════════════════════════════════════
+  # REDIS EXPORTER - Cache metrics
+  # ═══════════════════════════════════════════════════════════════
   - job_name: 'redis'
     static_configs:
-      - targets: ['redis:6379']
+      - targets: ['redis-exporter:9121']
         labels:
           service: 'redis'
           zone: 'cache'
 
-  # FAME Application
-  - job_name: 'fame-elt'
+  # ═══════════════════════════════════════════════════════════════
+  # GRAFANA - Dashboard metrics
+  # ═══════════════════════════════════════════════════════════════
+  - job_name: 'grafana'
     static_configs:
-      - targets: ['fame-elt:8000']
+      - targets: ['grafana:3000']
         labels:
-          service: 'elt-pipeline'
-          zone: 'application'
-
-  # Traefik API Gateway
-  - job_name: 'traefik'
-    static_configs:
-      - targets: ['traefik:8082']
-        labels:
-          service: 'gateway'
-          zone: 'network'
+          service: 'grafana'
+          zone: 'monitoring'
+    metrics_path: /metrics
