@@ -1,0 +1,59 @@
+{
+  "dashboards": [
+    {
+      "dashboard_title": "FAME Financial Overview",
+      "slug": "fame-overview",
+      "position_json": {},
+      "metadata": {
+        "timed_refresh_immune_slices": [],
+        "expanded_slices": {},
+        "refresh_frequency": 60,
+        "color_scheme": "supersetColors"
+      }
+    }
+  ],
+  "datasources": [
+    {
+      "database_name": "FAME_PostgreSQL",
+      "schema": "fame_analytics",
+      "table_name": "silver_silver_stocks",
+      "sql": null,
+      "main_dttm_col": null
+    },
+    {
+      "database_name": "FAME_PostgreSQL",
+      "schema": "fame_analytics",
+      "table_name": "silver_silver_forex",
+      "sql": null,
+      "main_dttm_col": "date"
+    },
+    {
+      "database_name": "FAME_PostgreSQL",
+      "schema": "fame_analytics",
+      "table_name": "silver_silver_financials",
+      "sql": null,
+      "main_dttm_col": null
+    },
+    {
+      "database_name": "FAME_PostgreSQL",
+      "schema": "fame_analytics",
+      "table_name": "silver_silver_transactions",
+      "sql": null,
+      "main_dttm_col": "created_at"
+    },
+    {
+      "database_name": "FAME_PostgreSQL",
+      "schema": "fame_streaming",
+      "table_name": "stock_quotes",
+      "sql": null,
+      "main_dttm_col": "timestamp"
+    },
+    {
+      "database_name": "FAME_PostgreSQL",
+      "schema": "fame_streaming",
+      "table_name": "alerts",
+      "sql": null,
+      "main_dttm_col": "timestamp"
+    }
+  ]
+}

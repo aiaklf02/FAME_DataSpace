@@ -1,8 +1,6 @@
 {
-  "annotations": {
-    "list": []
-  },
-  "description": "FAME Financial Data Space - Real-time Infrastructure Monitoring",
+  "annotations": { "list": [] },
+  "description": "FAME Financial Data Space - All Data Sources",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -11,282 +9,304 @@
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
       "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "id": 100,
+      "title": "📊 FAME Data Sources Summary",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
       "id": 1,
-      "panels": [],
-      "title": "🏢 FAME Data Space Overview",
-      "type": "row"
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT COUNT(*) as count FROM fame_analytics.silver_silver_stocks",
+        "refId": "A"
+      }],
+      "title": "📈 Stocks (Yahoo API)",
+      "type": "stat"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "thresholds"},
+          "color": { "mode": "thresholds" },
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 80},
-              {"color": "red", "value": 90}
-            ]
-          },
-          "unit": "percent"
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] },
+          "unit": "none"
         }
       },
-      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 1},
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
       "id": 2,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "title": "📊 Data Lake Usage",
-      "type": "gauge"
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT COUNT(*) as count FROM fame_analytics.silver_silver_forex",
+        "refId": "A"
+      }],
+      "title": "💱 Forex (ECB XML)",
+      "type": "stat"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "palette-classic"},
+          "color": { "mode": "thresholds" },
           "mappings": [],
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
-          "unit": "short"
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "orange", "value": null }] },
+          "unit": "none"
         }
       },
-      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 1},
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
       "id": 3,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
-        "textMode": "auto"
-      },
-      "title": "📈 Kafka Messages/sec",
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT COUNT(*) as count FROM fame_analytics.silver_silver_financials",
+        "refId": "A"
+      }],
+      "title": "📊 Financials (CSV)",
       "type": "stat"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "palette-classic"},
+          "color": { "mode": "thresholds" },
           "mappings": [],
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
-          "unit": "short"
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "purple", "value": null }] },
+          "unit": "none"
         }
       },
-      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 1},
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
       "id": 4,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
-        "textMode": "auto"
-      },
-      "title": "💾 Redis Cache Hits",
+      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT COUNT(*) as count FROM fame_streaming.stock_quotes",
+        "refId": "A"
+      }],
+      "title": "🔄 Kafka Streaming",
       "type": "stat"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 6},
+      "id": 101,
+      "title": "📈 Yahoo Finance API - Real-Time Stocks",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "thresholds"},
-          "mappings": [
-            {"options": {"0": {"color": "red", "text": "DOWN"}}, "type": "value"},
-            {"options": {"1": {"color": "green", "text": "UP"}}, "type": "value"}
-          ],
-          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}
-        }
+          "color": { "mode": "palette-classic" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "price" }, "properties": [{ "id": "unit", "value": "currencyUSD" }, { "id": "decimals", "value": 2 }] },
+          { "matcher": { "id": "byName", "options": "change_pct" }, "properties": [{ "id": "unit", "value": "percent" }] }
+        ]
       },
-      "gridPos": {"h": 6, "w": 6, "x": 18, "y": 1},
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 7 },
       "id": 5,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
-        "textMode": "auto"
-      },
-      "title": "🔗 Services Health",
-      "type": "stat"
+      "options": { "cellHeight": "md", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT symbol, company_name, price, volume, change_pct, previous_close, currency, exchange FROM fame_analytics.silver_silver_stocks ORDER BY symbol",
+        "refId": "A"
+      }],
+      "title": "📈 Yahoo Finance API - Live Stock Prices",
+      "type": "table"
     },
     {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 7},
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 17},
+      "id": 102,
+      "title": "🔄 Kafka Streaming Data",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "price" }, "properties": [{ "id": "unit", "value": "currencyUSD" }] }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
       "id": 6,
-      "panels": [],
-      "title": "📊 EtLT Pipeline Metrics",
-      "type": "row"
+      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT symbol, price, volume, change_percent, timestamp FROM fame_streaming.stock_quotes ORDER BY timestamp DESC LIMIT 20",
+        "refId": "A"
+      }],
+      "title": "🔄 Kafka - Live Stock Quotes",
+      "type": "table"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "palette-classic"},
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {"type": "linear"},
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {"group": "A", "mode": "none"},
-            "thresholdsStyle": {"mode": "off"}
-          },
+          "color": { "mode": "palette-classic" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
           "mappings": [],
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
-          "unit": "short"
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }] }
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
       "id": 7,
-      "options": {
-        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
-        "tooltip": {"mode": "single", "sort": "none"}
-      },
-      "title": "📥 Extract Rate (Records/min)",
-      "type": "timeseries"
+      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT alert_type, symbol, message, severity, timestamp FROM fame_streaming.alerts ORDER BY timestamp DESC LIMIT 15",
+        "refId": "A"
+      }],
+      "title": "🚨 Kafka - Real-Time Alerts",
+      "type": "table"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "palette-classic"},
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "bars",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {"type": "linear"},
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {"group": "A", "mode": "normal"},
-            "thresholdsStyle": {"mode": "off"}
-          },
-          "mappings": [],
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
-          "unit": "bytes"
-        }
-      },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
-      "id": 8,
-      "options": {
-        "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true},
-        "tooltip": {"mode": "multi", "sort": "none"}
-      },
-      "title": "📤 Data Lake Zone Storage",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 16},
-      "id": 9,
-      "panels": [],
-      "title": "💰 Financial Data Metrics",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 26},
+      "id": 103,
+      "title": "📊 CSV Data - SP500/NYSE/NASDAQ",
       "type": "row"
     },
     {
-      "datasource": {"type": "postgres", "uid": "postgres"},
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "palette-classic"},
+          "color": { "mode": "palette-classic" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
           "mappings": [],
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
-          "unit": "currencyEUR"
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "market_cap" }, "properties": [{ "id": "unit", "value": "currencyUSD" }] }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 27 },
+      "id": 8,
+      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT symbol, name, sector, market_cap, dividend_yield FROM fame_analytics.silver_silver_financials WHERE market_cap IS NOT NULL ORDER BY market_cap DESC LIMIT 30",
+        "refId": "A"
+      }],
+      "title": "📊 Top Companies (CSV Data - SP500/NYSE/NASDAQ)",
+      "type": "table"
+    },
+    {
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 37},
+      "id": 104,
+      "title": "💱 ECB XML - Forex Rates",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
         }
       },
-      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 17},
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 38 },
+      "id": 9,
+      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT currency, rate, date FROM fame_analytics.silver_silver_forex WHERE currency IN ('USD', 'GBP', 'JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'INR', 'BRL') ORDER BY date DESC, currency LIMIT 100",
+        "refId": "A"
+      }],
+      "title": "💱 Forex Exchange Rates (ECB XML Data)",
+      "type": "table"
+    },
+    {
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 48},
+      "id": 105,
+      "title": "💳 PostgreSQL - Transactions",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "amount" }, "properties": [{ "id": "unit", "value": "currencyUSD" }] }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 49 },
       "id": 10,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
-        "textMode": "auto"
-      },
-      "title": "💶 Total Transaction Volume",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "postgres", "uid": "postgres"},
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "palette-classic"},
-          "mappings": [],
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
-          "unit": "short"
-        }
-      },
-      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 17},
-      "id": 11,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
-        "textMode": "auto"
-      },
-      "title": "📊 Active Companies",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "postgres", "uid": "postgres"},
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "palette-classic"},
-          "custom": {"hideFrom": {"legend": false, "tooltip": false, "viz": false}},
-          "mappings": []
-        }
-      },
-      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 17},
-      "id": 12,
-      "options": {
-        "displayLabels": ["name", "percent"],
-        "legend": {"displayMode": "list", "placement": "right", "showLegend": true},
-        "pieType": "pie",
-        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": true},
-        "tooltip": {"mode": "single", "sort": "none"}
-      },
-      "title": "💳 Transactions by Type",
-      "type": "piechart"
+      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{
+        "datasource": { "type": "grafana-postgresql-datasource", "uid": "postgres" },
+        "editorMode": "code",
+        "format": "table",
+        "rawQuery": true,
+        "rawSql": "SELECT transaction_id, sender_id, receiver_id, amount, currency, status, created_at FROM fame_analytics.silver_silver_transactions ORDER BY created_at DESC LIMIT 30",
+        "refId": "A"
+      }],
+      "title": "💳 Financial Transactions (PostgreSQL Data)",
+      "type": "table"
     }
   ],
-  "refresh": "5s",
-  "schemaVersion": 38,
-  "style": "dark",
-  "tags": ["fame", "finance", "dataspace", "innovation"],
-  "templating": {"list": []},
-  "time": {"from": "now-1h", "to": "now"},
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": ["fame", "financial", "kafka", "spark", "streaming"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
   "timepicker": {},
-  "timezone": "",
-  "title": "FAME Financial Data Space - Real-time Dashboard",
-  "uid": "fame-realtime-dashboard",
+  "timezone": "browser",
+  "title": "FAME Financial Dashboard",
+  "uid": "fame-main",
   "version": 1,
   "weekStart": ""
 }

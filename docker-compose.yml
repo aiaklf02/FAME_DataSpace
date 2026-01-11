@@ -164,36 +164,52 @@ services:
       - fame-network
 
   # ════════════════════════════════════════════════════════════════════════════
-  # 📊 APACHE SUPERSET - BI Analytics & Data Exploration
+  # 📊 GRAFANA - Dashboards & Monitoring (Auto-Provisioned)
   # ════════════════════════════════════════════════════════════════════════════
   
-  superset:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile.superset
-    container_name: fame-superset
+  grafana:
+    image: grafana/grafana:latest
+    container_name: fame-grafana
     ports:
-      - "8088:8088"
+      - "3000:3000"
     environment:
-      SUPERSET_SECRET_KEY: "fame-dataspace-secret-key-2026"
-      SUPERSET_LOAD_EXAMPLES: "no"
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/fame-overview.json
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - superset-data:/app/superset_home
     networks:
       - fame-network
-    command: >
-      bash -c "
-        pip install psycopg2-binary &&
-        superset db upgrade &&
-        superset fab create-admin --username admin --firstname Admin --lastname User --email admin@fame.local --password admin123 || true &&
-        superset init &&
-        superset run -h 0.0.0.0 -p 8088 --with-threads --reload
-      "
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 📈 PROMETHEUS - Metrics Collection
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: fame-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - fame-network
 
 # ════════════════════════════════════════════════════════════════════════════
 # 🔧 NETWORKS & VOLUMES
@@ -211,5 +227,7 @@ volumes:
     name: fame-fuseki-data
   redis-data:
     name: fame-redis-cache
-  superset-data:
-    name: fame-superset-data
+  grafana-data:
+    name: fame-grafana-data
+  prometheus-data:
+    name: fame-prometheus-data
