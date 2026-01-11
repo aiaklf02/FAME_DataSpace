@@ -415,7 +415,6 @@ fame-forex          # Exchange rate updates
 | **Storage** | PostgreSQL | Relational data + analytics |
 | **Warehouse** | DuckDB | Fast OLAP queries |
 | **Semantic** | Apache Jena Fuseki | RDF triple store + SPARQL |
-| **Ontology Editor** | Protégé | OWL ontology design & editing |
 | **Visualization** | Grafana | Dashboards (YAML provisioned) |
 | **Metrics** | Prometheus | Metrics collection |
 | **Cache** | Redis | Performance caching |
