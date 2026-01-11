@@ -789,6 +789,222 @@
     <fame:transactionId>TX-2026-004-JKL012</fame:transactionId>
     <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">50000.00</fame:amount>
     <fame:transactionCurrency rdf:resource="http://fame.eu/data#EUR"/>
+<rdf:Description rdf:about="http://fame.eu/data#Apple_Inc">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>Apple Inc.</rdfs:label>
+    <foaf:name>Apple Inc.</foaf:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Technology"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>Cupertino</schema:addressLocality>
+            <schema:addressRegion>California</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://www.apple.com"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Apple_Inc."/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#Microsoft_Corp">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>Microsoft Corporation</rdfs:label>
+    <foaf:name>Microsoft Corporation</foaf:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Technology"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>Redmond</schema:addressLocality>
+            <schema:addressRegion>Washington</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://www.microsoft.com"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Microsoft"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#Alphabet_Inc">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>Alphabet Inc.</rdfs:label>
+    <foaf:name>Alphabet Inc.</foaf:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Communication"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>Mountain View</schema:addressLocality>
+            <schema:addressRegion>California</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://abc.xyz"/>
+    <rdfs:seeAlso rdf:resource="http://dbpedia.org/resource/Alphabet_Inc."/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#JPMorgan_Chase">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Company"/>
+    <rdf:type rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
+    <rdfs:label>JPMorgan Chase &amp; Co.</rdfs:label>
+    <foaf:name>JPMorgan Chase &amp; Co.</foaf:name>
+    <fame:belongsToSector rdf:resource="http://fame.eu/data#Financials"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#CSV_Financials"/>
+    <schema:address>
+        <schema:PostalAddress>
+            <schema:addressLocality>New York</schema:addressLocality>
+            <schema:addressRegion>New York</schema:addressRegion>
+            <schema:addressCountry>US</schema:addressCountry>
+        </schema:PostalAddress>
+    </schema:address>
+    <foaf:homepage rdf:resource="https://www.jpmorganchase.com"/>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     STOCKS (with full relationships)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#AAPL">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>Apple Inc. (AAPL)</rdfs:label>
+    <fame:symbol>AAPL</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">259.37</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">45123456</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4000000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NASDAQ"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#Apple_Inc"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+    <rdfs:seeAlso rdf:resource="https://finance.yahoo.com/quote/AAPL"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#MSFT">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>Microsoft Corporation (MSFT)</rdfs:label>
+    <fame:symbol>MSFT</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">425.22</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">22345678</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3200000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NASDAQ"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#Microsoft_Corp"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+    <rdfs:seeAlso rdf:resource="https://finance.yahoo.com/quote/MSFT"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#GOOGL">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>Alphabet Inc. (GOOGL)</rdfs:label>
+    <fame:symbol>GOOGL</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">197.94</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">18765432</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2450000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NASDAQ"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#Alphabet_Inc"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#JPM">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Stock"/>
+    <rdfs:label>JPMorgan Chase (JPM)</rdfs:label>
+    <fame:symbol>JPM</fame:symbol>
+    <fame:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">252.50</fame:price>
+    <fame:volume rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8765432</fame:volume>
+    <fame:marketCap rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">720000000000</fame:marketCap>
+    <fame:hasCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:tradedOn rdf:resource="http://fame.eu/data#NYSE"/>
+    <fame:issuedBy rdf:resource="http://fame.eu/data#JPMorgan_Chase"/>
+    <fame:hasSource rdf:resource="http://fame.eu/data#YahooFinanceAPI"/>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T00:00:00Z</dcterms:created>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     EXCHANGE RATES
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#EUR_USD_20260110">
+    <rdf:type rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:label>EUR/USD 2026-01-10</rdfs:label>
+    <fame:baseCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:targetCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:rate rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.0825</fame:rate>
+    <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-10</dcterms:date>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#EUR_GBP_20260110">
+    <rdf:type rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:label>EUR/GBP 2026-01-10</rdfs:label>
+    <fame:baseCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:targetCurrency rdf:resource="http://fame.eu/data#GBP"/>
+    <fame:rate rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0.8325</fame:rate>
+    <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-10</dcterms:date>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#EUR_JPY_20260110">
+    <rdf:type rdf:resource="http://fame.eu/ontology#ExchangeRate"/>
+    <rdfs:label>EUR/JPY 2026-01-10</rdfs:label>
+    <fame:baseCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:targetCurrency rdf:resource="http://fame.eu/data#JPY"/>
+    <fame:rate rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">162.45</fame:rate>
+    <dcterms:date rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-01-10</dcterms:date>
+    <fame:hasSource rdf:resource="http://fame.eu/data#ECB_XML"/>
+</rdf:Description>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     TRANSACTIONS
+     ═══════════════════════════════════════════════════════════════════════════ -->
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_001">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Transfer"/>
+    <rdfs:label>Transfer TX-001</rdfs:label>
+    <fame:transactionId>TX-2026-001-ABC123</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15000.00</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#EUR"/>
+    <fame:senderName>Société Alpha SAS</fame:senderName>
+    <fame:receiverName>Beta Industries GmbH</fame:receiverName>
+    <fame:status>COMPLETED</fame:status>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T14:32:15Z</dcterms:created>
+    <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_002">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Payment"/>
+    <rdfs:label>Payment TX-002</rdfs:label>
+    <fame:transactionId>TX-2026-002-DEF456</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2500.50</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#USD"/>
+    <fame:senderName>TechCorp Inc.</fame:senderName>
+    <fame:receiverName>CloudServices LLC</fame:receiverName>
+    <fame:status>COMPLETED</fame:status>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T09:15:42Z</dcterms:created>
+    <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_003">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Transfer"/>
+    <rdfs:label>Transfer TX-003</rdfs:label>
+    <fame:transactionId>TX-2026-003-GHI789</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">75000.00</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#GBP"/>
+    <fame:senderName>London Financial Ltd</fame:senderName>
+    <fame:receiverName>Paris Trading SA</fame:receiverName>
+    <fame:status>PENDING</fame:status>
+    <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-01-10T16:45:30Z</dcterms:created>
+    <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
+</rdf:Description>
+
+<rdf:Description rdf:about="http://fame.eu/data#TX_004">
+    <rdf:type rdf:resource="http://fame.eu/ontology#Deposit"/>
+    <rdfs:label>Deposit TX-004</rdfs:label>
+    <fame:transactionId>TX-2026-004-JKL012</fame:transactionId>
+    <fame:amount rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">50000.00</fame:amount>
+    <fame:transactionCurrency rdf:resource="http://fame.eu/data#EUR"/>
     <fame:senderName>Investment Fund Alpha</fame:senderName>
     <fame:receiverName>Private Bank AG</fame:receiverName>
     <fame:status>COMPLETED</fame:status>
@@ -796,3 +1012,4 @@
     <fame:hasSource rdf:resource="http://fame.eu/data#PostgreSQL_Transactions"/>
 </rdf:Description>
 
+</rdf:RDF>

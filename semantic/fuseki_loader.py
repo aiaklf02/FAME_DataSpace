@@ -53,15 +53,13 @@ NAMED_GRAPHS = {
 # File mappings (relative to semantic/ directory)
 SEMANTIC_FILES = {
     "ontology": [
-        "fame_data_protege.owl",   # Main Protégé ontology
-        "fame_ontology.owl"        # Additional ontology
+        "fame_data_protege.owl"   # Main Protégé ontology
     ],
     "data": [
         "FAME-RDF.rdf"             # RDF instance data
     ],
     "vocabulary": [
-        "FAME-SKOS.ttl",          # SKOS vocabulary
-        "fame_vocabulary.skos"     # Additional SKOS
+        "FAME-SKOS.ttl"           # SKOS vocabulary
     ]
 }
 
