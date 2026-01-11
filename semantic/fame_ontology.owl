@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY fame "http://fame.eu/ontology#">
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#">
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#">
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/">
+    <!ENTITY skos "http://www.w3.org/2004/02/skos/core#">
+]>
+
+<rdf:RDF xmlns="http://fame.eu/ontology#"
+     xml:base="http://fame.eu/ontology"
+     xmlns:fame="http://fame.eu/ontology#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+
+    <!-- ============================================
+         FAME Financial Data Space Ontology
+         Version: 1.0
+         Domain: Finance & Embedded Finance
+         ============================================ -->
+
+    <owl:Ontology rdf:about="http://fame.eu/ontology">
+        <dc:title>FAME Financial Data Space Ontology</dc:title>
+        <dc:description>Ontology for semantic interoperability in financial data spaces, covering market data, corporate finance, foreign exchange, and payment transactions.</dc:description>
+        <dc:creator>FAME Data Space Project - Master M2</dc:creator>
+        <dc:date>2026-01-10</dc:date>
+        <owl:versionInfo>1.0.0</owl:versionInfo>
+    </owl:Ontology>
+
+    <!-- ============================================
+         CLASSES - Core Financial Entities
+         ============================================ -->
+
+    <!-- Base Class: Financial Entity -->
+    <owl:Class rdf:about="&fame;FinancialEntity">
+        <rdfs:label xml:lang="en">Financial Entity</rdfs:label>
+        <rdfs:label xml:lang="fr">Entité Financière</rdfs:label>
+        <rdfs:comment>Base class for all financial entities in the FAME data space.</rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== MARKET DATA DOMAIN ==================== -->
+
+    <!-- Class: Financial Instrument -->
+    <owl:Class rdf:about="&fame;FinancialInstrument">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Financial Instrument</rdfs:label>
+        <rdfs:comment>A tradeable financial asset such as stocks, bonds, or derivatives.</rdfs:comment>
+        <skos:altLabel>Security</skos:altLabel>
+        <skos:altLabel>Asset</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Stock -->
+    <owl:Class rdf:about="&fame;Stock">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialInstrument"/>
+        <rdfs:label xml:lang="en">Stock</rdfs:label>
+        <rdfs:label xml:lang="fr">Action</rdfs:label>
+        <rdfs:comment>An equity security representing ownership in a corporation.</rdfs:comment>
+        <skos:altLabel>Equity</skos:altLabel>
+        <skos:altLabel>Share</skos:altLabel>
+        <skos:altLabel>Titre</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Cryptocurrency -->
+    <owl:Class rdf:about="&fame;Cryptocurrency">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialInstrument"/>
+        <rdfs:label xml:lang="en">Cryptocurrency</rdfs:label>
+        <rdfs:comment>A digital or virtual currency using cryptography for security.</rdfs:comment>
+        <skos:altLabel>Crypto</skos:altLabel>
+        <skos:altLabel>Digital Asset</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Stock Exchange -->
+    <owl:Class rdf:about="&fame;StockExchange">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Stock Exchange</rdfs:label>
+        <rdfs:label xml:lang="fr">Bourse</rdfs:label>
+        <rdfs:comment>A marketplace where securities are traded.</rdfs:comment>
+        <skos:altLabel>Exchange</skos:altLabel>
+        <skos:altLabel>Market</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Price Quote -->
+    <owl:Class rdf:about="&fame;PriceQuote">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Price Quote</rdfs:label>
+        <rdfs:comment>A price quotation for a financial instrument at a specific time.</rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== FOREIGN EXCHANGE DOMAIN ==================== -->
+
+    <!-- Class: Currency -->
+    <owl:Class rdf:about="&fame;Currency">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Currency</rdfs:label>
+        <rdfs:label xml:lang="fr">Devise</rdfs:label>
+        <rdfs:comment>A system of money in general use in a particular country.</rdfs:comment>
+        <skos:altLabel>Money</skos:altLabel>
+        <skos:altLabel>Monnaie</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Exchange Rate -->
+    <owl:Class rdf:about="&fame;ExchangeRate">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Exchange Rate</rdfs:label>
+        <rdfs:label xml:lang="fr">Taux de Change</rdfs:label>
+        <rdfs:comment>The rate at which one currency can be exchanged for another.</rdfs:comment>
+        <skos:altLabel>FX Rate</skos:altLabel>
+        <skos:altLabel>Forex Rate</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Central Bank -->
+    <owl:Class rdf:about="&fame;CentralBank">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialInstitution"/>
+        <rdfs:label xml:lang="en">Central Bank</rdfs:label>
+        <rdfs:comment>A national bank that provides financial services to a country's government and commercial banks.</rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== CORPORATE FINANCE DOMAIN ==================== -->
+
+    <!-- Class: Financial Institution -->
+    <owl:Class rdf:about="&fame;FinancialInstitution">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Financial Institution</rdfs:label>
+        <rdfs:label xml:lang="fr">Institution Financière</rdfs:label>
+        <rdfs:comment>An organization that deals with financial transactions such as investments, loans, and deposits.</rdfs:comment>
+    </owl:Class>
+
+    <!-- Class: Bank -->
+    <owl:Class rdf:about="&fame;Bank">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialInstitution"/>
+        <rdfs:label xml:lang="en">Bank</rdfs:label>
+        <rdfs:label xml:lang="fr">Banque</rdfs:label>
+        <rdfs:comment>A financial institution licensed to receive deposits and make loans.</rdfs:comment>
+        <skos:altLabel>Banking Institution</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Insurance Company -->
+    <owl:Class rdf:about="&fame;InsuranceCompany">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialInstitution"/>
+        <rdfs:label xml:lang="en">Insurance Company</rdfs:label>
+        <rdfs:comment>A company that provides insurance coverage.</rdfs:comment>
+    </owl:Class>
+
+    <!-- Class: Fintech Company -->
+    <owl:Class rdf:about="&fame;FintechCompany">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialInstitution"/>
+        <rdfs:label xml:lang="en">Fintech Company</rdfs:label>
+        <rdfs:comment>A technology company providing financial services.</rdfs:comment>
+        <skos:altLabel>Financial Technology Company</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Financial Statement -->
+    <owl:Class rdf:about="&fame;FinancialStatement">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Financial Statement</rdfs:label>
+        <rdfs:label xml:lang="fr">État Financier</rdfs:label>
+        <rdfs:comment>A formal record of the financial activities of a business.</rdfs:comment>
+    </owl:Class>
+
+    <!-- Class: Income Statement -->
+    <owl:Class rdf:about="&fame;IncomeStatement">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialStatement"/>
+        <rdfs:label xml:lang="en">Income Statement</rdfs:label>
+        <rdfs:comment>A financial statement showing revenues, expenses, and profits.</rdfs:comment>
+        <skos:altLabel>Profit and Loss Statement</skos:altLabel>
+        <skos:altLabel>P&amp;L</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Balance Sheet -->
+    <owl:Class rdf:about="&fame;BalanceSheet">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialStatement"/>
+        <rdfs:label xml:lang="en">Balance Sheet</rdfs:label>
+        <rdfs:comment>A financial statement showing assets, liabilities, and equity.</rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== TRANSACTIONS DOMAIN ==================== -->
+
+    <!-- Class: Transaction -->
+    <owl:Class rdf:about="&fame;Transaction">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Transaction</rdfs:label>
+        <rdfs:label xml:lang="fr">Transaction</rdfs:label>
+        <rdfs:comment>A financial transaction involving the transfer of money or assets.</rdfs:comment>
+        <skos:altLabel>Payment</skos:altLabel>
+        <skos:altLabel>Transfer</skos:altLabel>
+    </owl:Class>
+
+    <!-- Class: Payment -->
+    <owl:Class rdf:about="&fame;Payment">
+        <rdfs:subClassOf rdf:resource="&fame;Transaction"/>
+        <rdfs:label xml:lang="en">Payment</rdfs:label>
+        <rdfs:comment>A transfer of money from one party to another.</rdfs:comment>
+    </owl:Class>
+
+    <!-- Class: SEPA Transfer -->
+    <owl:Class rdf:about="&fame;SEPATransfer">
+        <rdfs:subClassOf rdf:resource="&fame;Payment"/>
+        <rdfs:label xml:lang="en">SEPA Transfer</rdfs:label>
+        <rdfs:comment>A euro credit transfer within the Single Euro Payments Area.</rdfs:comment>
+    </owl:Class>
+
+    <!-- Class: Instant Payment -->
+    <owl:Class rdf:about="&fame;InstantPayment">
+        <rdfs:subClassOf rdf:resource="&fame;Payment"/>
+        <rdfs:label xml:lang="en">Instant Payment</rdfs:label>
+        <rdfs:comment>A real-time payment that is processed within seconds.</rdfs:comment>
+    </owl:Class>
+
+    <!-- Class: Account -->
+    <owl:Class rdf:about="&fame;Account">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Account</rdfs:label>
+        <rdfs:label xml:lang="fr">Compte</rdfs:label>
+        <rdfs:comment>A financial account held at a financial institution.</rdfs:comment>
+    </owl:Class>
+
+    <!-- Class: Customer -->
+    <owl:Class rdf:about="&fame;Customer">
+        <rdfs:subClassOf rdf:resource="&fame;FinancialEntity"/>
+        <rdfs:label xml:lang="en">Customer</rdfs:label>
+        <rdfs:label xml:lang="fr">Client</rdfs:label>
+        <rdfs:comment>An individual or organization that uses financial services.</rdfs:comment>
+    </owl:Class>
+
+    <!-- ============================================
+         OBJECT PROPERTIES - Relationships
+         ============================================ -->
+
+    <!-- Property: hasTicker -->
+    <owl:ObjectProperty rdf:about="&fame;hasTicker">
+        <rdfs:domain rdf:resource="&fame;Stock"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>has ticker symbol</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: tradedOn -->
+    <owl:ObjectProperty rdf:about="&fame;tradedOn">
+        <rdfs:domain rdf:resource="&fame;FinancialInstrument"/>
+        <rdfs:range rdf:resource="&fame;StockExchange"/>
+        <rdfs:label>traded on exchange</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: issuedBy -->
+    <owl:ObjectProperty rdf:about="&fame;issuedBy">
+        <rdfs:domain rdf:resource="&fame;FinancialInstrument"/>
+        <rdfs:range rdf:resource="&fame;FinancialInstitution"/>
+        <rdfs:label>issued by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: hasExchangeRate -->
+    <owl:ObjectProperty rdf:about="&fame;hasExchangeRate">
+        <rdfs:domain rdf:resource="&fame;Currency"/>
+        <rdfs:range rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:label>has exchange rate</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: publishedBy -->
+    <owl:ObjectProperty rdf:about="&fame;publishedBy">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&fame;CentralBank"/>
+        <rdfs:label>published by</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: fromCurrency -->
+    <owl:ObjectProperty rdf:about="&fame;fromCurrency">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&fame;Currency"/>
+        <rdfs:label>from currency</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: toCurrency -->
+    <owl:ObjectProperty rdf:about="&fame;toCurrency">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&fame;Currency"/>
+        <rdfs:label>to currency</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: hasFinancialStatement -->
+    <owl:ObjectProperty rdf:about="&fame;hasFinancialStatement">
+        <rdfs:domain rdf:resource="&fame;FinancialInstitution"/>
+        <rdfs:range rdf:resource="&fame;FinancialStatement"/>
+        <rdfs:label>has financial statement</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: belongsToSector -->
+    <owl:ObjectProperty rdf:about="&fame;belongsToSector">
+        <rdfs:domain rdf:resource="&fame;FinancialInstitution"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>belongs to sector</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: hasSender -->
+    <owl:ObjectProperty rdf:about="&fame;hasSender">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&fame;Customer"/>
+        <rdfs:label>has sender</rdfs:label>
+        <skos:altLabel>has payer</skos:altLabel>
+        <skos:altLabel>has debitor</skos:altLabel>
+    </owl:ObjectProperty>
+
+    <!-- Property: hasReceiver -->
+    <owl:ObjectProperty rdf:about="&fame;hasReceiver">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&fame;Customer"/>
+        <rdfs:label>has receiver</rdfs:label>
+        <skos:altLabel>has beneficiary</skos:altLabel>
+        <skos:altLabel>has payee</skos:altLabel>
+    </owl:ObjectProperty>
+
+    <!-- Property: processedBy -->
+    <owl:ObjectProperty rdf:about="&fame;processedBy">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&fame;Bank"/>
+        <rdfs:label>processed by bank</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- Property: usesChannel -->
+    <owl:ObjectProperty rdf:about="&fame;usesChannel">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>uses channel</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- ============================================
+         DATA PROPERTIES - Attributes
+         ============================================ -->
+
+    <!-- Property: price -->
+    <owl:DatatypeProperty rdf:about="&fame;price">
+        <rdfs:domain rdf:resource="&fame;PriceQuote"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>price</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Property: volume -->
+    <owl:DatatypeProperty rdf:about="&fame;volume">
+        <rdfs:domain rdf:resource="&fame;PriceQuote"/>
+        <rdfs:range rdf:resource="&xsd;integer"/>
+        <rdfs:label>trading volume</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Property: rate -->
+    <owl:DatatypeProperty rdf:about="&fame;rate">
+        <rdfs:domain rdf:resource="&fame;ExchangeRate"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>exchange rate value</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Property: amount -->
+    <owl:DatatypeProperty rdf:about="&fame;amount">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>transaction amount</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Property: amountEUR -->
+    <owl:DatatypeProperty rdf:about="&fame;amountEUR">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>amount in EUR</rdfs:label>
+        <rdfs:comment>Normalized amount in Euros for cross-currency comparison.</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- Property: revenue -->
+    <owl:DatatypeProperty rdf:about="&fame;revenue">
+        <rdfs:domain rdf:resource="&fame;FinancialStatement"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>revenue</rdfs:label>
+        <skos:altLabel>sales</skos:altLabel>
+        <skos:altLabel>turnover</skos:altLabel>
+    </owl:DatatypeProperty>
+
+    <!-- Property: netIncome -->
+    <owl:DatatypeProperty rdf:about="&fame;netIncome">
+        <rdfs:domain rdf:resource="&fame;FinancialStatement"/>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+        <rdfs:label>net income</rdfs:label>
+        <skos:altLabel>profit</skos:altLabel>
+        <skos:altLabel>earnings</skos:altLabel>
+    </owl:DatatypeProperty>
+
+    <!-- Property: timestamp -->
+    <owl:DatatypeProperty rdf:about="&fame;timestamp">
+        <rdfs:range rdf:resource="&xsd;dateTime"/>
+        <rdfs:label>timestamp</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Property: isCrossBorder -->
+    <owl:DatatypeProperty rdf:about="&fame;isCrossBorder">
+        <rdfs:domain rdf:resource="&fame;Transaction"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+        <rdfs:label>is cross-border transaction</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- Property: country -->
+    <owl:DatatypeProperty rdf:about="&fame;country">
+        <rdfs:range rdf:resource="&xsd;string"/>
+        <rdfs:label>country code</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- ============================================
+         INDIVIDUALS - Sample Instances
+         ============================================ -->
+
+    <!-- Central Bank: ECB -->
+    <owl:NamedIndividual rdf:about="&fame;ECB">
+        <rdf:type rdf:resource="&fame;CentralBank"/>
+        <rdfs:label>European Central Bank</rdfs:label>
+        <fame:country>EU</fame:country>
+    </owl:NamedIndividual>
+
+    <!-- Currency: EUR -->
+    <owl:NamedIndividual rdf:about="&fame;EUR">
+        <rdf:type rdf:resource="&fame;Currency"/>
+        <rdfs:label>Euro</rdfs:label>
+        <skos:notation>EUR</skos:notation>
+    </owl:NamedIndividual>
+
+    <!-- Currency: USD -->
+    <owl:NamedIndividual rdf:about="&fame;USD">
+        <rdf:type rdf:resource="&fame;Currency"/>
+        <rdfs:label>US Dollar</rdfs:label>
+        <skos:notation>USD</skos:notation>
+    </owl:NamedIndividual>
+
+    <!-- Exchange: NASDAQ -->
+    <owl:NamedIndividual rdf:about="&fame;NASDAQ">
+        <rdf:type rdf:resource="&fame;StockExchange"/>
+        <rdfs:label>NASDAQ Stock Exchange</rdfs:label>
+        <fame:country>US</fame:country>
+    </owl:NamedIndividual>
+
+    <!-- Exchange: Euronext Paris -->
+    <owl:NamedIndividual rdf:about="&fame;EuronextParis">
+        <rdf:type rdf:resource="&fame;StockExchange"/>
+        <rdfs:label>Euronext Paris</rdfs:label>
+        <fame:country>FR</fame:country>
+    </owl:NamedIndividual>
+
+</rdf:RDF>

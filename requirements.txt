@@ -1,0 +1,58 @@
+# FAME Financial Data Space - Dependencies
+# Architecture: Data Lake + Data Fabric + Data Warehouse (DuckDB)
+# Pattern: EtLT (Extract, light Transform, Load, Transform)
+
+# Data Processing
+pandas
+numpy
+openpyxl
+pyarrow
+
+# API & Web Requests
+requests
+aiohttp
+
+# XML Processing
+lxml
+xmltodict
+
+# Database & Data Warehouse
+sqlalchemy
+psycopg2-binary
+duckdb
+
+# RDF & Semantic Web
+rdflib
+SPARQLWrapper
+
+# Visualization & Dashboard
+streamlit
+plotly
+matplotlib
+
+# Data Validation
+pydantic
+jsonschema
+
+# Caching
+redis
+
+# Streaming
+confluent-kafka
+
+# Monitoring
+prometheus-client
+
+# MinIO Storage
+minio
+boto3
+
+# Utilities
+python-dotenv
+loguru
+click
+rich
+
+# Testing
+pytest
+pytest-asyncio

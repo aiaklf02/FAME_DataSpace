@@ -1,0 +1,35 @@
+# FAME ETL Service Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional Kafka and Spark dependencies
+RUN pip install --no-cache-dir \
+    kafka-python==2.0.2 \
+    confluent-kafka==2.3.0 \
+    minio==7.2.0 \
+    psycopg2-binary==2.9.9 \
+    pyspark==3.5.0
+
+# Copy application code
+COPY elt/ ./elt/
+COPY sources/ ./sources/
+COPY fabric/ ./fabric/
+COPY data/ ./data/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Run ETL pipeline
+CMD ["python", "etl/main_pipeline.py"]

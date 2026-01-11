@@ -1,0 +1,33 @@
+# FAME Dashboard Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional dashboard dependencies
+RUN pip install --no-cache-dir \
+    psycopg2-binary==2.9.9 \
+    minio==7.2.0
+
+# Copy application code
+COPY semantic/prototype/ ./prototype/
+COPY semantic/ ./semantic/
+COPY data/ ./data/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Expose Streamlit port
+EXPOSE 8501
+
+# Run Streamlit dashboard
+CMD ["streamlit", "run", "prototype/app.py", "--server.address=0.0.0.0", "--server.port=8501"]

@@ -1,0 +1,15 @@
+# FAME Financial Data Space - Grafana Dashboard Provisioning
+
+apiVersion: 1
+
+providers:
+  - name: 'FAME Dashboards'
+    orgId: 1
+    folder: 'FAME Financial Data Space'
+    folderUid: 'fame-dataspace'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards

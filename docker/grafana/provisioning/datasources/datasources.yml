@@ -1,0 +1,38 @@
+# FAME Financial Data Space - Grafana Datasources Provisioning
+
+apiVersion: 1
+
+datasources:
+  # Prometheus - Time series metrics
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: "15s"
+      httpMethod: POST
+
+  # PostgreSQL - Transaction database
+  - name: PostgreSQL
+    type: postgres
+    url: postgres:5432
+    database: fame_transactions
+    user: fame_user
+    secureJsonData:
+      password: fame_password
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 10
+      maxIdleConns: 5
+      connMaxLifetime: 14400
+    editable: false
+
+  # Redis - Cache metrics
+  - name: Redis
+    type: redis-datasource
+    url: redis:6379
+    jsonData:
+      client: standalone
+    editable: false

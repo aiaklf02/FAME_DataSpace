@@ -1,0 +1,386 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# FAME Financial Data Space - Complete Infrastructure
+# ═══════════════════════════════════════════════════════════════════════════════
+# Architecture: Data Lake + Data Fabric + Data Warehouse (EtLT)
+# 
+# 🌟 INNOVATION FEATURES:
+# ✅ Real-time Streaming (Apache Kafka)
+# ✅ Data Lake (MinIO S3 - Bronze/Silver/Gold)
+# ✅ Data Warehouse (DuckDB Analytics)
+# ✅ Semantic Layer (Fuseki RDF/SPARQL/OWL)
+# ✅ Real-time Monitoring (Grafana + Prometheus)
+# ✅ BI Analytics Platform (Apache Superset)
+# ✅ Caching Layer (Redis)
+# ✅ API Gateway (Traefik)
+# ✅ Stream Processing (Apache Spark)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+services:
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🔄 STREAMING LAYER - Apache Kafka
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: fame-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: fame-kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: kafka
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: fame-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: fame-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🗄️ DATA LAKE - MinIO (S3 Compatible)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  minio:
+    image: minio/minio:latest
+    container_name: fame-datalake
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: fame_admin
+      MINIO_ROOT_PASSWORD: fame_secret_2024
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: fame-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set fame http://minio:9000 fame_admin fame_secret_2024;
+      mc mb --ignore-existing fame/raw-zone;
+      mc mb --ignore-existing fame/bronze-zone;
+      mc mb --ignore-existing fame/silver-zone;
+      mc mb --ignore-existing fame/gold-zone;
+      mc mb --ignore-existing fame/rdf-store;
+      mc mb --ignore-existing fame/warehouse;
+      echo '✅ Data Lake zones created';
+      "
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🗃️ DATABASES
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: fame-postgres
+    environment:
+      POSTGRES_DB: fame_transactions
+      POSTGRES_USER: fame_user
+      POSTGRES_PASSWORD: fame_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fame_user -d fame_transactions"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ⚡ CACHING LAYER - Redis (INNOVATION)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  redis:
+    image: redis:7-alpine
+    container_name: fame-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🔗 SEMANTIC LAYER - Apache Jena Fuseki (RDF/SPARQL)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  fuseki:
+    image: stain/jena-fuseki:latest
+    container_name: fame-fuseki
+    environment:
+      ADMIN_PASSWORD: admin123
+      JVM_ARGS: -Xmx2g
+    ports:
+      - "3030:3030"
+    volumes:
+      - fuseki-data:/fuseki
+      - ./docker/fuseki/config.ttl:/fuseki/configuration/fame.ttl
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 📊 MONITORING - Prometheus (INNOVATION)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: fame-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 📈 GRAFANA - Real-time Dashboards (INNOVATION)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: fame-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: fame_grafana_2024
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource,grafana-piechart-panel
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+      - postgres
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 📊 APACHE SUPERSET - BI Analytics (INNOVATION)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  superset:
+    image: apache/superset:latest
+    container_name: fame-superset
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_SECRET_KEY: fame_superset_secret_key_2024
+      SUPERSET_LOAD_EXAMPLES: "no"
+      DATABASE_URL: postgresql://fame_user:fame_password@postgres:5432/fame_transactions
+    volumes:
+      - superset-data:/app/superset_home
+      - ./docker/superset/superset_config.py:/app/pythonpath/superset_config.py
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - fame-network
+    command: >
+      /bin/sh -c "
+      superset db upgrade &&
+      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@fame.eu --password fame_admin_2024 || true &&
+      superset init &&
+      superset run -h 0.0.0.0 -p 8088 --with-threads --reload
+      "
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ⚡ STREAM PROCESSING - Apache Spark (DISABLED - using DuckDB for EtLT)
+  # Note: Bitnami Spark images are no longer available on Docker Hub
+  # The project uses DuckDB embedded warehouse which doesn't require Spark
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # spark-master:
+  #   image: apache/spark:3.5.0
+  #   container_name: fame-spark-master
+  #   environment:
+  #     - SPARK_MODE=master
+  #   ports:
+  #     - "8083:8080"
+  #     - "7077:7077"
+  #   networks:
+  #     - fame-network
+
+  # spark-worker:
+  #   image: apache/spark:3.5.0
+  #   container_name: fame-spark-worker
+  #   environment:
+  #     - SPARK_MODE=worker
+  #     - SPARK_MASTER_URL=spark://spark-master:7077
+  #   depends_on:
+  #     - spark-master
+  #   networks:
+  #     - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🚀 FAME APPLICATION SERVICES
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  fame-elt:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.etl
+    container_name: fame-elt-service
+    depends_on:
+      - kafka
+      - minio
+      - postgres
+      - redis
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MINIO_ENDPOINT: minio:9000
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: fame_transactions
+      REDIS_HOST: redis
+    volumes:
+      - ./data:/app/data
+      - ./elt:/app/elt
+      - ./sources:/app/sources
+      - ./fabric:/app/fabric
+    networks:
+      - fame-network
+
+  fame-dashboard:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dashboard
+    container_name: fame-dashboard
+    depends_on:
+      - fuseki
+      - postgres
+      - redis
+    ports:
+      - "8501:8501"
+    environment:
+      FUSEKI_ENDPOINT: http://fuseki:3030
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    volumes:
+      - ./semantic/prototype:/app/prototype
+      - ./data:/app/data
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🌐 API GATEWAY - Traefik (INNOVATION)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  traefik:
+    image: traefik:v3.0
+    container_name: fame-gateway
+    ports:
+      - "80:80"
+      - "8082:8080"
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - fame-network
+    labels:
+      - "traefik.enable=true"
+
+# ════════════════════════════════════════════════════════════════════════════
+# 🔧 NETWORKS & VOLUMES
+# ════════════════════════════════════════════════════════════════════════════
+
+networks:
+  fame-network:
+    driver: bridge
+    name: fame-dataspace-network
+
+volumes:
+  minio-data:
+    name: fame-datalake-storage
+  postgres-data:
+    name: fame-postgres-data
+  fuseki-data:
+    name: fame-fuseki-data
+  redis-data:
+    name: fame-redis-cache
+  grafana-data:
+    name: fame-grafana-data
+  prometheus-data:
+    name: fame-prometheus-data
+  superset-data:
+    name: fame-superset-data

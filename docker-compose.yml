@@ -1,0 +1,215 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# FAME Financial Data Space - Complete Infrastructure
+# ═══════════════════════════════════════════════════════════════════════════════
+# Architecture: Data Lake + Data Fabric + Data Warehouse + Streaming (EtLT)
+# 
+# 🌟 CORE SERVICES:
+# ✅ Apache Kafka + Zookeeper (Real-time Streaming)
+# ✅ Apache Spark (Stream Processing)
+# ✅ PostgreSQL (Transactions Database)
+# ✅ Redis (Caching Layer)
+# ✅ Apache Fuseki (RDF/SPARQL Semantic Layer)
+# ✅ Metabase (BI Analytics & Dashboards)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+services:
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🔄 STREAMING LAYER - Apache Kafka
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: fame-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: fame-kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: fame-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: fame-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ⚡ STREAM PROCESSING - Apache Spark
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  spark-master:
+    image: apache/spark:3.5.0
+    container_name: fame-spark-master
+    command: bash -c "/opt/spark/sbin/start-master.sh && tail -f /opt/spark/logs/*"
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_NO_DAEMONIZE=true
+    ports:
+      - "8081:8080"
+      - "7077:7077"
+    networks:
+      - fame-network
+
+  spark-worker:
+    image: apache/spark:3.5.0
+    container_name: fame-spark-worker
+    command: bash -c "/opt/spark/sbin/start-worker.sh spark://spark-master:7077 && tail -f /opt/spark/logs/*"
+    environment:
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_NO_DAEMONIZE=true
+    depends_on:
+      - spark-master
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🗃️ DATABASE - PostgreSQL
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  postgres:
+    image: postgres:15-alpine
+    container_name: fame-postgres
+    environment:
+      POSTGRES_DB: fame_transactions
+      POSTGRES_USER: fame_user
+      POSTGRES_PASSWORD: fame_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fame_user -d fame_transactions"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ⚡ CACHING LAYER - Redis
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  redis:
+    image: redis:7-alpine
+    container_name: fame-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - fame-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🔗 SEMANTIC LAYER - Apache Jena Fuseki (RDF/SPARQL)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  fuseki:
+    image: stain/jena-fuseki:latest
+    container_name: fame-fuseki
+    environment:
+      ADMIN_PASSWORD: admin123
+      JVM_ARGS: -Xmx1g
+    ports:
+      - "3030:3030"
+    volumes:
+      - fuseki-data:/fuseki
+      - ./docker/fuseki/config.ttl:/fuseki/configuration/fame.ttl
+    networks:
+      - fame-network
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 📊 APACHE SUPERSET - BI Analytics & Data Exploration
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  superset:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.superset
+    container_name: fame-superset
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_SECRET_KEY: "fame-dataspace-secret-key-2026"
+      SUPERSET_LOAD_EXAMPLES: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - superset-data:/app/superset_home
+    networks:
+      - fame-network
+    command: >
+      bash -c "
+        pip install psycopg2-binary &&
+        superset db upgrade &&
+        superset fab create-admin --username admin --firstname Admin --lastname User --email admin@fame.local --password admin123 || true &&
+        superset init &&
+        superset run -h 0.0.0.0 -p 8088 --with-threads --reload
+      "
+
+# ════════════════════════════════════════════════════════════════════════════
+# 🔧 NETWORKS & VOLUMES
+# ════════════════════════════════════════════════════════════════════════════
+
+networks:
+  fame-network:
+    driver: bridge
+    name: fame-dataspace-network
+
+volumes:
+  postgres-data:
+    name: fame-postgres-data
+  fuseki-data:
+    name: fame-fuseki-data
+  redis-data:
+    name: fame-redis-cache
+  superset-data:
+    name: fame-superset-data
